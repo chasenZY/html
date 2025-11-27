@@ -1,0 +1,938 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingshot版本更新日志</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&amp;family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d7e1ec 100%);
+            --primary-blue: #0984e3;
+            --deep-blue: #2c3e50;
+            --link-color: #0984e3;
+            --text-main: #2d3436;
+            --text-light: #636e72;
+            --card-bg: #ffffff;
+            --tag-major-bg: #ff7675;
+            --tag-major-text: #d63031;
+            --tag-patch-bg: #55efc4;
+            --tag-patch-text: #00b894;
+            --highlight-bg: #ffeaa7;
+            --highlight-text: #2d3436;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* --- 头部区域 --- */
+        header {
+            background: linear-gradient(to right, #2c3e50, #34495e);
+            color: white;
+            padding: 60px 20px 30px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            margin-top: 10px;
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 300;
+            margin-bottom: 25px;
+        }
+
+        /* --- 控制栏 --- */
+        .controls-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            max-width: 900px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 5;
+        }
+
+        .filter-select {
+            padding: 12px 15px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            outline: none;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 10px auto;
+            padding-right: 30px;
+            min-width: 130px;
+        }
+        .filter-select option { background: #2c3e50; color: white; }
+
+        .search-wrapper {
+            position: relative;
+            flex-grow: 1;
+            min-width: 200px;
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.7);
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            outline: none;
+            backdrop-filter: blur(5px);
+        }
+        .search-input::placeholder { color: rgba(255,255,255,0.6); }
+
+        .edit-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 36px;
+            height: 20px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--tag-patch-bg); }
+        input:checked + .slider:before { transform: translateX(16px); }
+
+        /* --- 按钮组 --- */
+        .header-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none; 
+        }
+
+        .action-btn:hover {
+            background: white;
+            color: var(--deep-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn-save { background: rgba(85, 239, 196, 0.2); border-color: rgba(85, 239, 196, 0.5); }
+        .btn-source { background: rgba(116, 185, 255, 0.2); border-color: rgba(116, 185, 255, 0.5); display: none; }
+
+        /* --- 模态弹窗 --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(44, 62, 80, 0.8); z-index: 1000;
+            justify-content: center; align-items: center; backdrop-filter: blur(3px);
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+        .modal-box {
+            background: white; width: 90%; max-width: 600px; border-radius: 12px; padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 15px;
+            transform: scale(0.9); transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--deep-blue); }
+        .modal-desc { font-size: 0.9rem; color: var(--text-light); }
+        
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-label { font-size: 0.85rem; font-weight: 600; color: #636e72; }
+        .modal-input {
+            width: 100%; padding: 10px; border: 1px solid #dfe6e9; border-radius: 6px;
+            font-family: 'Roboto', sans-serif; font-size: 0.9rem; outline: none; background: #f8f9fa;
+        }
+        .modal-textarea {
+            width: 100%; height: 150px; padding: 15px; border: 1px solid #dfe6e9;
+            border-radius: 8px; font-family: monospace; font-size: 0.85rem;
+            resize: vertical; outline: none; background: #f8f9fa;
+        }
+        .modal-input:focus, .modal-textarea:focus { border-color: var(--primary-blue); background: white; }
+        
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+        .btn { padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; }
+        .btn-cancel { background: #f1f2f6; color: #636e72; }
+        .btn-cancel:hover { background: #dfe6e9; }
+        .btn-confirm { background: var(--primary-blue); color: white; }
+        .btn-confirm:hover { background: #0984e3; }
+
+        /* --- 时间轴样式 --- */
+        .container { max-width: 900px; margin: 50px auto; padding: 0 20px; min-height: 400px; }
+        .timeline { position: relative; padding-bottom: 50px; }
+        .timeline::before {
+            content: ''; position: absolute; top: 0; bottom: 0; left: 24px;
+            width: 4px; background: #dfe6e9; border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative; margin-bottom: 40px; padding-left: 70px;
+            opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s forwards;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .timeline-item.hidden { display: none; }
+        .timeline-marker {
+            position: absolute; left: 14px; top: 20px; width: 24px; height: 24px;
+            background: var(--card-bg); border: 4px solid var(--primary-blue);
+            border-radius: 50%; z-index: 2; box-shadow: 0 0 0 4px rgba(9, 132, 227, 0.2);
+            transition: all 0.3s ease;
+        }
+        .timeline-item:hover .timeline-marker {
+            background: var(--primary-blue); box-shadow: 0 0 15px rgba(9, 132, 227, 0.6); transform: scale(1.1);
+        }
+        .timeline-card {
+            background: var(--card-bg); border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(45, 52, 54, 0.08);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.5); overflow: hidden;
+        }
+        .timeline-item.open .timeline-card {
+            box-shadow: 0 15px 35px rgba(9, 132, 227, 0.15); border-color: rgba(9, 132, 227, 0.3);
+        }
+        .card-header {
+            padding: 18px 25px; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+            border-bottom: 1px solid #f1f2f6; user-select: none;
+        }
+        .card-header:hover { background: #f1f2f6; }
+        .version-group { display: flex; flex-direction: column; }
+        .version-number { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.4rem; color: var(--deep-blue); line-height: 1.2; }
+        .version-date { font-size: 0.85rem; color: var(--text-light); margin-top: 4px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;}
+        .author-tag { color: var(--primary-blue); font-weight: 500; display: inline-flex; align-items: center; gap: 3px; margin-left: 8px; }
+        .meta-group { display: flex; align-items: center; gap: 15px; }
+        .tag { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .tag.major { background-color: rgba(255, 118, 117, 0.15); color: var(--tag-major-text); border: 1px solid rgba(255, 118, 117, 0.3); }
+        .tag.patch { background-color: rgba(85, 239, 196, 0.15); color: var(--tag-patch-text); border: 1px solid rgba(85, 239, 196, 0.3); }
+        .toggle-icon {
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; background: #dfe6e9; color: #636e72; font-size: 0.8rem;
+            transition: transform 0.4s ease;
+        }
+        .timeline-item.open .toggle-icon { transform: rotate(180deg); background: var(--primary-blue); color: white; }
+        
+        .card-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, opacity 0.5s ease;
+            opacity: 0; background-color: #fff;
+        }
+        .timeline-item.open .card-body { max-height: 4000px; opacity: 1; }
+        
+        /* 内容区样式 (FIX: Removed pre-wrap to avoid double line breaks) */
+        .log-content { 
+            padding: 25px; 
+            font-size: 0.95rem; 
+            color: #444; 
+            /* white-space: pre-wrap;  <-- 已移除此行，解决保存后换行错乱问题 */
+            outline: none; 
+            word-wrap: break-word; 
+        }
+        .log-content[contenteditable="true"] {
+            background-color: #fcfcfc;
+            border: 1px dashed #ccc;
+        }
+
+        /* 链接样式 */
+        .log-content a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed var(--link-color);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .log-content a:hover {
+            color: var(--deep-blue);
+            border-bottom-style: solid;
+        }
+
+        .highlight-title {
+            color: var(--primary-blue); font-weight: 700; display: inline-block; margin-top: 15px;
+            margin-bottom: 8px; background: rgba(9, 132, 227, 0.08); padding: 2px 8px; border-radius: 4px;
+        }
+        .log-placeholder { text-align: center; padding: 30px; color: #b2bec3; border: 2px dashed #dfe6e9; border-radius: 8px; }
+        .no-results { text-align: center; padding: 40px; color: #636e72; font-style: italic; display: none; }
+
+        .search-highlight {
+            background-color: var(--highlight-bg);
+            color: var(--highlight-text);
+            padding: 0 2px;
+            border-radius: 2px;
+            font-weight: bold;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 600px) {
+            .controls-container { flex-direction: column; align-items: stretch; }
+            .filter-select, .search-wrapper { width: 100%; }
+            .edit-mode-toggle { justify-content: center; background: rgba(0,0,0,0.3); }
+            header { padding-top: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-actions">
+            <!-- 源数据按钮 -->
+            <button id="btnSource" class="action-btn btn-source" onclick="openSourceLink()" style="display: flex;" title="https://nqjs83ycu0f.feishu.cn/wiki/ChnMwSmymidiarkEkdecxz15nJf?from=from_copylink">🔗 源数据</button>
+            <button class="action-btn btn-import" onclick="openModal()">📥 导入</button>
+            <button class="action-btn btn-save" onclick="saveHtmlFile()">💾 保存更改</button>
+        </div>
+        
+        <h1>KS Changelog</h1>
+        <div class="subtitle">Kingshot 版本更新历史记录 (数据源:Discord+七麦)</div>
+
+        <!-- 增强的控制栏 -->
+        <div class="controls-container">
+            <!-- 日期筛选 -->
+            <select id="dateFilter" class="filter-select" onchange="filterTimeline()"><option value="all">📅 全部日期</option><option value="2025-10">📅 2025-10</option><option value="2025-09">📅 2025-09</option><option value="2025-06">📅 2025-06</option><option value="2025-04">📅 2025-04</option><option value="2025-03">📅 2025-03</option></select>
+
+            <!-- 分类筛选 -->
+            <select id="typeFilter" class="filter-select" onchange="filterTimeline()"><option value="all">🏷️ 全部分类</option><option value="重大更新">🏷️ 重大更新</option></select>
+
+            <!-- 搜索框 -->
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索内容..." onkeyup="filterTimeline()" value="">
+            </div>
+
+            <!-- 编辑模式开关 -->
+            <label class="edit-mode-toggle">
+                <div class="toggle-switch">
+                    <input type="checkbox" id="editModeToggle" onchange="toggleEditMode()">
+                    <span class="slider"></span>
+                </div>
+                <span>🔧 编辑模式</span>
+            </label>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="timeline" id="timeline-root">
+                <div class="timeline-item open" style="animation-delay: 0s" data-ver="" data-date="2025-10-28" data-type="重大更新" data-author="Kingshot">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-10-28 <span class="author-tag">👤 Kingshot</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 新增“神秘试炼”功能：包含挑战性关卡，可获取独家装饰等奖励，具体开放时间因王国进度而异，请以游戏内信息为准。<br>② 新增“领袖荣耀”功能：王国迁移时，若王国成为领袖王国可获得领袖徽章，积累徽章可解锁特殊领袖荣耀皮肤。<br>③ 新增“心情状态”功能：可设置状态与他人互动，增加社交趣味性和个性化。<br>④ “剑域对决”重做：引入新的军团层级系统，个人和联盟奖励更丰厚（详情见游戏内规则）；提供免费1小时治疗加速（随时间刷新）；新增建筑放弃计时器（从尚未完全控制的建筑中撤回所有友军小队后会显示失去控制权的倒计时）；建筑信息弹窗新增“召回小队”按钮；注册和匹配界面支持时间显示并可在UTC和当地时间间切换。<br><span class="highlight-title">【优化调整】</span><br>① 联盟领地：新增“联盟炸弹”道具，可清除空置资源节点、野兽和恐怖生物，方便传送。<br>② 自动狩猎：支持自定义搜索范围，提升效率。<br>③ 地图缩放：缩放时改进堡垒和其他联盟总部的显示效果。<br>④ 里程碑：调整部分任务目标，以获得更好的平衡性和体验。<br>⑤ 情报任务：新增“一键领取”按钮加快收集速度，并增加任务详细规则。<br>⑥ 绿洲岛：水灵精华达到容量上限时会收到通知。<br>⑦ 王国迁移聊天：简繁体中文聊天频道合并为单一“中文”频道，便于交流。<br>⑧ 城镇加成：加成列表过长时，展开后会自动上移以适应屏幕。<br>⑨ 行军队列列表：采集队列在遭受攻击时会显示警告。<br>⑩ 英雄招募：拥有少于10个铂金或黄金钥匙时，可使用“全部招募”功能。<br>⑪ 邮件系统：医院溢出导致士兵损失时，邮件会包含详细明细；过期物品自动转换时会收到通知邮件。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.1s" data-ver="" data-date="2025-09-04" data-type="重大更新" data-author="Kingshot">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-09-04 <span class="author-tag">👤 Kingshot</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 新玩法：三联盟冲突，为三大联盟间的激烈对决做好准备，团队合作是荣耀和财富的关键，活动时间请参考服务器日历；<br>② 新活动：王国迁移，活动期间可迁移至符合要求的其他王国，详情请参阅活动规则并关注官方公告；<br>③ 新功能：熊猎活动中新增第二个陷阱，两个陷阱不能同时设置，冷却期间无法加入任一陷阱，联盟伤害奖励已取消并整合到个人伤害奖励中；<br>④ 新功能：超值月卡中包含联盟自动互助功能，可在在线时自动协助盟友；<br><span class="highlight-title">【优化调整】</span><br>① 剑域对决：初始免费行军加速提升至5个，每1分钟恢复1个，容量提升至30个，侦察效率增强，能更快收集敌人情报；<br>② 熊猎：个人伤害奖励升级，冷却时间在参与后的第2个自然日UTC 00:00重置，开始获得积分后立即开始倒计时（以上优化将在更新后生效）；<br>③ 维京复仇：通过邮件收到更全面的战报，新增“一键领取”按钮方便领取防御点奖励，可使用“查看成员”功能更高效部署；<br>④ 绿洲岛：新增“点赞历史”功能显示收到的点赞详情，更新后可一次性选择多个植被，新增基础装饰“草地”，部分1级以上装饰选中时会出现“拆除”按钮；<br>⑤ 聊天：发送后一定时间内可撤回消息，世界和联盟频道新增“求助”按钮，能更快帮助盟友；<br>⑥ 任务：新增每日任务“在宠物探险中派遣宠物寻宝1次”和“在宠物探险中派遣宠物寻宝4次”，以上优化仅在更新后生效，更新前完成无法获得对应奖励；<br>⑦ 英雄相关功能：英雄和英雄详情界面中为3代以上英雄添加世代标签，英雄升阶界面新增左右按钮，方便切换英雄；<br>⑧ 部署：对其他总督的城镇、联盟旗帜、联盟总部、前哨站、圣所、要塞、国王城堡或炮塔发起集结时，部署界面新增“UTC时间”按钮，士兵默认在所有兵种间平均分配，确保阵型更平衡；<br>⑨ 安全资源：在权力王国、成长之路、军备竞赛、军官计划、英雄培养、野兽袭击、全面出击和黄金之剑等活动中，将部分奖励和可兑换物品替换为等量安全资源（列表不详尽，具体请参考游戏内信息）；<br>⑩ 资源返还：取消建筑建造、士兵训练、科技研究或士兵治疗时，将根据已使用的安全和非安全资源比例返还资源；<br>⑪ 联盟混战：新增双方积分百分比显示，更清晰了解战场态势；<br>⑫ 权力王国：准备阶段新增双方积分百分比显示；<br>⑬ 士兵训练：军营界面新增按钮，方便切换不同军营；<br>⑭ 宠物界面：精炼补丁新增左右按钮，可切换不同宠物；<br>⑮ 礼包：每日特惠升级，价值更高（以上优化仅在更新后生效，建议稍后购买）；</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.2s" data-ver="" data-date="2025-06-26" data-type="重大更新" data-author="Kingshot">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-06-26 <span class="author-tag">👤 Kingshot</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 新玩法：绿洲岛——船只已准备就绪，等待总督命令，可扬帆前往传说中的绿洲岛建造新家（需更新至最新版本）。<br>② 新活动：联盟混战——最强联盟争夺权力，唯有团结才能击败强大敌人，可与盟友联手带领联盟走向最终胜利（活动时间见游戏内日历）。<br>③ 新活动：商人帝国——贸易路线现已开放，总督们定会争夺这些宝贵商队的控制权，护送商队可获得丰厚奖励（活动时间见游戏内日历）。<br>④ 新功能：联盟凯旋——推出每周激励计划，奖励努力的联盟成员，完成尽可能多的每日和活动任务可赚取丰厚积分奖励。<br>⑤ 新功能：圣所传送——全新联盟科技上线，研究完成后，可在圣所之战期间免费传送至联盟已注册的圣所或堡垒废墟。<br>⑥ 新英雄：法赫德、妍宇和美琴——三位史诗英雄现已通过活动和招募开放获取。<br><span class="highlight-title">【优化调整】</span><br>① 权力王国优化：准备阶段提供临时发展增益直至阶段结束；排名奖励中的英雄碎片替换为战斗奖励，可选择英雄碎片或幸运英雄装备宝箱。<br>② 绿洲岛相关奖励：在权力王国、最强总督、军备竞赛、军官计划、英雄养成、击败附近野兽和全力以赴等活动中新增奖励。<br>③ 资源采集优化：搜索区域扩大，已采集但未耗尽节点的刷新时间缩短，使采集更轻松。<br>④ 竞技场优化：新增挑战次数批量购买选项，显示推荐战力，提升整体体验。<br>⑤ 掉落奖励显示优化：新增奖励显示，可查看攻击野兽、集结讨伐巨兽、情报任务中的野兽狩猎等活动的详细掉落信息。<br>⑥ 体力获取优化：体力界面新增快速领取功能。<br>⑦ 宝石商店优化：新增通用加速、高级传送器等物品。<br>⑧ 医院优化：在世界地图治疗伤兵时，现在会弹出弹窗而非全屏界面。<br>⑨ 联盟通知优化：联盟通知弹窗支持翻译。<br>⑩ 联盟战争列表优化：新增筛选功能，可自定义通知显示。<br>⑪ 聊天优化：新增聊天草稿功能，切换频道或关闭聊天窗口时保存输入内容；未投票通知在联盟聊天中会有提醒，投票栏可展开或折叠；联盟通知界面显示公告历史，并有复制和举报选项；分享坐标时可添加消息。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.30000000000000004s" data-ver="" data-date="2025-04-16" data-type="重大更新" data-author="Kingshot">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-04-16 <span class="author-tag">👤 Kingshot</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 新活动“王国之力”：加入国王终极对决，赢取至高荣耀和专属皮肤（活动时间详见服务器日历）；<br>② 新活动“最强总督”：与跨王国总督竞争荣誉排名，赢取丰厚奖励；<br>③ 新宠物：可在野外驯服野牛、驼鹿、狮子、灰熊，获得多种技能和属性加成（随王国发展解锁）；<br>④ 新功能“皮肤商店”：可通过完成每日任务获取皮肤代币，免费兑换愤怒仙人掌、仙人掌屋、沙漠之花头像框等；<br>⑤ 新功能“动作表情”：新增动作表情提升社交互动乐趣，可通过不同活动获取更多；<br>⑥ 新时代“真金时代”：王国年龄达70天解锁，收集真金可升级城镇中心、军事及其他建筑为真金建筑，打造真金武器增强士兵实力；<br>⑦ 新活动“黄金 glaives”：瞭望塔任务可额外获得暗淡金晶石，用于兑换真金、加速道具及更多稀有物品（活动时间详见服务器日历）；<br><span class="highlight-title">【优化调整】</span><br>① 竞技场奖励优化：提升排名奖励，增加奖励领取人数；<br>② 总督大厅奖励优化：提升排名奖励，增加奖励领取人数；<br>③ 活动奖励优化：提升“规划城市”“加班工作”“提升实力”“击败附近野兽”“全力以赴”“研发新技术”等活动的排名奖励，增加奖励领取人数；<br>④ 充值礼包：新增酷炫行军皮肤奖励 tiers，符合条件的总督可立即领取；<br>⑤ 征服之战优化：已通关30关且部署英雄总实力为敌人两倍的总督可启用快速战斗；<br>⑥ 瞭望塔战斗优化：征服之战已通关30关的总督可启用征服情报快速战斗；<br>⑦ 征服之战战力显示优化：调整并优化敌人战力显示，使其更准确合理；<br>⑧ 集结优化：显示集结队长专属装备技能及不同士兵类型比例；<br>⑨ 英雄装备优化：优化英雄装备属性显示，增强其属性及总督实力；<br>⑩ 里程碑优化：新增“文化重生”里程碑奖励，城镇中心达到30级的总督可获得专属奖励；<br>⑪ 皮肤优化：优化“深渊城市”城镇皮肤和“伟大黄金饕餮”行军皮肤动画；<br>⑫ 总督魅力优化：优化总督魅力图标；<br>⑬ 总督装备优化：优化部分总督装备图标。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.4s" data-ver="" data-date="2025-03-04" data-type="重大更新" data-author="Kingshot">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-03-04 <span class="author-tag">👤 Kingshot</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 增强索尔城镇发展能力：将“Construction Emergency”合并为“Resourceful”，技能效果为建筑速度提升3%/6%/9%/12%/15%，建筑成本降低3%/6%/9%/12%/15%。<br>② 为索尔新增远征技能“Taskforce Training”，效果为全体小队防御提升2%/4%/6%/8%/10%，生命值提升3%/6%/9%/12%/15%。<br>③ 增强阿玛迪斯远征突击能力：将“Unrighteous Strike”效果从使友军攻击有几率击晕敌人1回合，改为使全体小队有几率提升50%伤害，几率为8%/16%/24%/32%/40%。<br>④ 增强赫尔加远征防御能力：将“Entangle”效果从使友军攻击有几率击晕敌人1回合，改为“Oath of Guardian”使全体小队有几率降低50%所受伤害，几率为8%/16%/24%/32%/40%。<br>⑤ 增强贾贝尔远征防御能力：将“Rally Flag”效果从使全体部队攻击有几率击晕目标1回合，改为贾贝尔使全体小队有几率降低50%所受伤害，几率为8%/16%/24%/32%/40%。<br><span class="highlight-title">【优化调整】</span><br>① 优化赫尔加、阿玛迪斯、贾贝尔、索尔、霍华德、戈登、奎因、琴科的部分技能描述，以提升清晰度，效果不变。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div id="noResults" class="no-results" style="display: none;">未找到匹配的更新记录 ❄️</div>
+    </div>
+
+    <!-- 导入弹窗 -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-box">
+            <div class="modal-title">数据导入设置</div>
+            
+            <div class="input-group">
+                <label class="input-label">📌 源数据链接 (可选，填写后右上角显示跳转按钮)</label>
+                <input type="text" id="sourceUrlInput" class="modal-input" placeholder="例如: https://discord.com/channels/..." value="">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">📊 Markdown 表格数据</label>
+                <textarea class="modal-textarea" id="markdownInput" placeholder="| 版本 | 日期 | 更新内容 | 更新分类 | 发布人 |
+| 1.0.1 | 2025/11/26 | 测试内容... | 重大更新 | Admin |"></textarea>
+            </div>
+            
+            <div class="modal-desc">
+                系统将自动识别表头并按<b>日期倒序</b>排列。支持列：日期, 内容, 分类, 发布人。
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-confirm" onclick="parseAndRender()">确认导入</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- 数据区域 (重要：请勿删除 START/END 标记) ---
+    /*__DATA_START__*/
+    let defaultData = [
+    {
+        "ver": "",
+        "date": "2025-10-28",
+        "type": "重大更新",
+        "author": "Kingshot",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 新增“神秘试炼”功能：包含挑战性关卡，可获取独家装饰等奖励，具体开放时间因王国进度而异，请以游戏内信息为准。<br>② 新增“领袖荣耀”功能：王国迁移时，若王国成为领袖王国可获得领袖徽章，积累徽章可解锁特殊领袖荣耀皮肤。<br>③ 新增“心情状态”功能：可设置状态与他人互动，增加社交趣味性和个性化。<br>④ “剑域对决”重做：引入新的军团层级系统，个人和联盟奖励更丰厚（详情见游戏内规则）；提供免费1小时治疗加速（随时间刷新）；新增建筑放弃计时器（从尚未完全控制的建筑中撤回所有友军小队后会显示失去控制权的倒计时）；建筑信息弹窗新增“召回小队”按钮；注册和匹配界面支持时间显示并可在UTC和当地时间间切换。<br><span class=\"highlight-title\">【优化调整】</span><br>① 联盟领地：新增“联盟炸弹”道具，可清除空置资源节点、野兽和恐怖生物，方便传送。<br>② 自动狩猎：支持自定义搜索范围，提升效率。<br>③ 地图缩放：缩放时改进堡垒和其他联盟总部的显示效果。<br>④ 里程碑：调整部分任务目标，以获得更好的平衡性和体验。<br>⑤ 情报任务：新增“一键领取”按钮加快收集速度，并增加任务详细规则。<br>⑥ 绿洲岛：水灵精华达到容量上限时会收到通知。<br>⑦ 王国迁移聊天：简繁体中文聊天频道合并为单一“中文”频道，便于交流。<br>⑧ 城镇加成：加成列表过长时，展开后会自动上移以适应屏幕。<br>⑨ 行军队列列表：采集队列在遭受攻击时会显示警告。<br>⑩ 英雄招募：拥有少于10个铂金或黄金钥匙时，可使用“全部招募”功能。<br>⑪ 邮件系统：医院溢出导致士兵损失时，邮件会包含详细明细；过期物品自动转换时会收到通知邮件。"
+    },
+    {
+        "ver": "",
+        "date": "2025-09-04",
+        "type": "重大更新",
+        "author": "Kingshot",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 新玩法：三联盟冲突，为三大联盟间的激烈对决做好准备，团队合作是荣耀和财富的关键，活动时间请参考服务器日历；<br>② 新活动：王国迁移，活动期间可迁移至符合要求的其他王国，详情请参阅活动规则并关注官方公告；<br>③ 新功能：熊猎活动中新增第二个陷阱，两个陷阱不能同时设置，冷却期间无法加入任一陷阱，联盟伤害奖励已取消并整合到个人伤害奖励中；<br>④ 新功能：超值月卡中包含联盟自动互助功能，可在在线时自动协助盟友；<br><span class=\"highlight-title\">【优化调整】</span><br>① 剑域对决：初始免费行军加速提升至5个，每1分钟恢复1个，容量提升至30个，侦察效率增强，能更快收集敌人情报；<br>② 熊猎：个人伤害奖励升级，冷却时间在参与后的第2个自然日UTC 00:00重置，开始获得积分后立即开始倒计时（以上优化将在更新后生效）；<br>③ 维京复仇：通过邮件收到更全面的战报，新增“一键领取”按钮方便领取防御点奖励，可使用“查看成员”功能更高效部署；<br>④ 绿洲岛：新增“点赞历史”功能显示收到的点赞详情，更新后可一次性选择多个植被，新增基础装饰“草地”，部分1级以上装饰选中时会出现“拆除”按钮；<br>⑤ 聊天：发送后一定时间内可撤回消息，世界和联盟频道新增“求助”按钮，能更快帮助盟友；<br>⑥ 任务：新增每日任务“在宠物探险中派遣宠物寻宝1次”和“在宠物探险中派遣宠物寻宝4次”，以上优化仅在更新后生效，更新前完成无法获得对应奖励；<br>⑦ 英雄相关功能：英雄和英雄详情界面中为3代以上英雄添加世代标签，英雄升阶界面新增左右按钮，方便切换英雄；<br>⑧ 部署：对其他总督的城镇、联盟旗帜、联盟总部、前哨站、圣所、要塞、国王城堡或炮塔发起集结时，部署界面新增“UTC时间”按钮，士兵默认在所有兵种间平均分配，确保阵型更平衡；<br>⑨ 安全资源：在权力王国、成长之路、军备竞赛、军官计划、英雄培养、野兽袭击、全面出击和黄金之剑等活动中，将部分奖励和可兑换物品替换为等量安全资源（列表不详尽，具体请参考游戏内信息）；<br>⑩ 资源返还：取消建筑建造、士兵训练、科技研究或士兵治疗时，将根据已使用的安全和非安全资源比例返还资源；<br>⑪ 联盟混战：新增双方积分百分比显示，更清晰了解战场态势；<br>⑫ 权力王国：准备阶段新增双方积分百分比显示；<br>⑬ 士兵训练：军营界面新增按钮，方便切换不同军营；<br>⑭ 宠物界面：精炼补丁新增左右按钮，可切换不同宠物；<br>⑮ 礼包：每日特惠升级，价值更高（以上优化仅在更新后生效，建议稍后购买）；"
+    },
+    {
+        "ver": "",
+        "date": "2025-06-26",
+        "type": "重大更新",
+        "author": "Kingshot",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 新玩法：绿洲岛——船只已准备就绪，等待总督命令，可扬帆前往传说中的绿洲岛建造新家（需更新至最新版本）。<br>② 新活动：联盟混战——最强联盟争夺权力，唯有团结才能击败强大敌人，可与盟友联手带领联盟走向最终胜利（活动时间见游戏内日历）。<br>③ 新活动：商人帝国——贸易路线现已开放，总督们定会争夺这些宝贵商队的控制权，护送商队可获得丰厚奖励（活动时间见游戏内日历）。<br>④ 新功能：联盟凯旋——推出每周激励计划，奖励努力的联盟成员，完成尽可能多的每日和活动任务可赚取丰厚积分奖励。<br>⑤ 新功能：圣所传送——全新联盟科技上线，研究完成后，可在圣所之战期间免费传送至联盟已注册的圣所或堡垒废墟。<br>⑥ 新英雄：法赫德、妍宇和美琴——三位史诗英雄现已通过活动和招募开放获取。<br><span class=\"highlight-title\">【优化调整】</span><br>① 权力王国优化：准备阶段提供临时发展增益直至阶段结束；排名奖励中的英雄碎片替换为战斗奖励，可选择英雄碎片或幸运英雄装备宝箱。<br>② 绿洲岛相关奖励：在权力王国、最强总督、军备竞赛、军官计划、英雄养成、击败附近野兽和全力以赴等活动中新增奖励。<br>③ 资源采集优化：搜索区域扩大，已采集但未耗尽节点的刷新时间缩短，使采集更轻松。<br>④ 竞技场优化：新增挑战次数批量购买选项，显示推荐战力，提升整体体验。<br>⑤ 掉落奖励显示优化：新增奖励显示，可查看攻击野兽、集结讨伐巨兽、情报任务中的野兽狩猎等活动的详细掉落信息。<br>⑥ 体力获取优化：体力界面新增快速领取功能。<br>⑦ 宝石商店优化：新增通用加速、高级传送器等物品。<br>⑧ 医院优化：在世界地图治疗伤兵时，现在会弹出弹窗而非全屏界面。<br>⑨ 联盟通知优化：联盟通知弹窗支持翻译。<br>⑩ 联盟战争列表优化：新增筛选功能，可自定义通知显示。<br>⑪ 聊天优化：新增聊天草稿功能，切换频道或关闭聊天窗口时保存输入内容；未投票通知在联盟聊天中会有提醒，投票栏可展开或折叠；联盟通知界面显示公告历史，并有复制和举报选项；分享坐标时可添加消息。"
+    },
+    {
+        "ver": "",
+        "date": "2025-04-16",
+        "type": "重大更新",
+        "author": "Kingshot",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 新活动“王国之力”：加入国王终极对决，赢取至高荣耀和专属皮肤（活动时间详见服务器日历）；<br>② 新活动“最强总督”：与跨王国总督竞争荣誉排名，赢取丰厚奖励；<br>③ 新宠物：可在野外驯服野牛、驼鹿、狮子、灰熊，获得多种技能和属性加成（随王国发展解锁）；<br>④ 新功能“皮肤商店”：可通过完成每日任务获取皮肤代币，免费兑换愤怒仙人掌、仙人掌屋、沙漠之花头像框等；<br>⑤ 新功能“动作表情”：新增动作表情提升社交互动乐趣，可通过不同活动获取更多；<br>⑥ 新时代“真金时代”：王国年龄达70天解锁，收集真金可升级城镇中心、军事及其他建筑为真金建筑，打造真金武器增强士兵实力；<br>⑦ 新活动“黄金 glaives”：瞭望塔任务可额外获得暗淡金晶石，用于兑换真金、加速道具及更多稀有物品（活动时间详见服务器日历）；<br><span class=\"highlight-title\">【优化调整】</span><br>① 竞技场奖励优化：提升排名奖励，增加奖励领取人数；<br>② 总督大厅奖励优化：提升排名奖励，增加奖励领取人数；<br>③ 活动奖励优化：提升“规划城市”“加班工作”“提升实力”“击败附近野兽”“全力以赴”“研发新技术”等活动的排名奖励，增加奖励领取人数；<br>④ 充值礼包：新增酷炫行军皮肤奖励 tiers，符合条件的总督可立即领取；<br>⑤ 征服之战优化：已通关30关且部署英雄总实力为敌人两倍的总督可启用快速战斗；<br>⑥ 瞭望塔战斗优化：征服之战已通关30关的总督可启用征服情报快速战斗；<br>⑦ 征服之战战力显示优化：调整并优化敌人战力显示，使其更准确合理；<br>⑧ 集结优化：显示集结队长专属装备技能及不同士兵类型比例；<br>⑨ 英雄装备优化：优化英雄装备属性显示，增强其属性及总督实力；<br>⑩ 里程碑优化：新增“文化重生”里程碑奖励，城镇中心达到30级的总督可获得专属奖励；<br>⑪ 皮肤优化：优化“深渊城市”城镇皮肤和“伟大黄金饕餮”行军皮肤动画；<br>⑫ 总督魅力优化：优化总督魅力图标；<br>⑬ 总督装备优化：优化部分总督装备图标。"
+    },
+    {
+        "ver": "",
+        "date": "2025-03-04",
+        "type": "重大更新",
+        "author": "Kingshot",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 增强索尔城镇发展能力：将“Construction Emergency”合并为“Resourceful”，技能效果为建筑速度提升3%/6%/9%/12%/15%，建筑成本降低3%/6%/9%/12%/15%。<br>② 为索尔新增远征技能“Taskforce Training”，效果为全体小队防御提升2%/4%/6%/8%/10%，生命值提升3%/6%/9%/12%/15%。<br>③ 增强阿玛迪斯远征突击能力：将“Unrighteous Strike”效果从使友军攻击有几率击晕敌人1回合，改为使全体小队有几率提升50%伤害，几率为8%/16%/24%/32%/40%。<br>④ 增强赫尔加远征防御能力：将“Entangle”效果从使友军攻击有几率击晕敌人1回合，改为“Oath of Guardian”使全体小队有几率降低50%所受伤害，几率为8%/16%/24%/32%/40%。<br>⑤ 增强贾贝尔远征防御能力：将“Rally Flag”效果从使全体部队攻击有几率击晕目标1回合，改为贾贝尔使全体小队有几率降低50%所受伤害，几率为8%/16%/24%/32%/40%。<br><span class=\"highlight-title\">【优化调整】</span><br>① 优化赫尔加、阿玛迪斯、贾贝尔、索尔、霍华德、戈登、奎因、琴科的部分技能描述，以提升清晰度，效果不变。"
+    }
+];
+    let sourceLink = "https://nqjs83ycu0f.feishu.cn/wiki/ChnMwSmymidiarkEkdecxz15nJf?from=from_copylink";
+    /*__DATA_END__*/
+    // ----------------------------------------------
+
+    const timelineRoot = document.getElementById('timeline-root');
+    const modal = document.getElementById('importModal');
+    const inputArea = document.getElementById('markdownInput');
+    const sourceUrlInput = document.getElementById('sourceUrlInput');
+    const searchInput = document.getElementById('searchInput');
+    const dateFilter = document.getElementById('dateFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const noResultsMsg = document.getElementById('noResults');
+    const editToggle = document.getElementById('editModeToggle');
+    const btnSource = document.getElementById('btnSource');
+
+    // 初始化
+    renderTimeline(defaultData);
+    renderSourceButton();
+
+    function renderSourceButton() {
+        if (sourceLink && sourceLink.trim() !== "") {
+            btnSource.style.display = "flex";
+            btnSource.title = sourceLink;
+        } else {
+            btnSource.style.display = "none";
+        }
+    }
+
+    function openSourceLink() {
+        if (sourceLink) {
+            window.open(sourceLink, '_blank');
+        }
+    }
+
+    // --- 核心：渲染函数 ---
+    function renderTimeline(data) {
+        const sortedData = data.slice().sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
+            const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
+            return timeB - timeA;
+        });
+        defaultData = sortedData;
+
+        initDateFilterOptions(sortedData);
+        initTypeFilterOptions(sortedData);
+
+        timelineRoot.innerHTML = ''; 
+        sortedData.forEach((item, index) => {
+            const isPatch = (item.type || "").includes('补丁') || (item.type || "").toLowerCase() === 'patch';
+            const tagClass = isPatch ? 'patch' : 'major';
+            const tagName = (item.type && item.type.trim()) ? item.type : (isPatch ? '补丁更新' : '版本更新');
+            
+            const isOpenClass = index === 0 ? 'open' : ''; 
+            const delay = Math.min(index * 0.1, 1.0); 
+            const displayVer = item.ver && item.ver.trim() ? "v" + item.ver : "Update";
+            const displayAuthor = item.author ? `<span class="author-tag">👤 ${item.author}</span>` : '';
+            const displayDate = formatDateSimple(item.date);
+
+            let contentHtml = '';
+            if (!item.content || item.content.trim() === '') {
+                contentHtml = `<div class="log-placeholder">暂无内容</div>`;
+            } else {
+                // FIX: 增加判断，如果已经是HTML（包含高亮标签）则不再重复format
+                if(item.content.includes('<a href=') || item.content.includes('<span class="highlight-title">')) {
+                    contentHtml = item.content; 
+                } else {
+                    contentHtml = formatText(item.content); 
+                }
+            }
+
+            const html = `
+                <div class="timeline-item ${isOpenClass}" style="animation-delay: ${delay}s" 
+                     data-ver="${item.ver || ''}" data-date="${item.date || ''}" 
+                     data-type="${item.type || ''}" data-author="${item.author || ''}">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">${displayVer}</span>
+                                <span class="version-date">📅 ${displayDate} ${displayAuthor}</span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag ${tagClass}">${tagName}</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false">${contentHtml}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            timelineRoot.innerHTML += html;
+        });
+
+        toggleEditMode();
+        if(searchInput.value.trim() !== "" || dateFilter.value !== 'all' || typeFilter.value !== 'all') {
+            filterTimeline();
+        }
+    }
+
+    // --- 筛选选项初始化 ---
+    function initDateFilterOptions(data) {
+        const months = new Set();
+        data.forEach(item => {
+            const d = formatDateSimple(item.date);
+            if(d !== '未知日期') months.add(d.substring(0, 7));
+        });
+        const sortedMonths = Array.from(months).sort().reverse();
+        const currentVal = dateFilter.value;
+        dateFilter.innerHTML = '<option value="all">📅 全部日期</option>';
+        sortedMonths.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = `📅 ${m}`;
+            dateFilter.appendChild(opt);
+        });
+        if(sortedMonths.includes(currentVal)) dateFilter.value = currentVal;
+    }
+
+    function initTypeFilterOptions(data) {
+        const types = new Set();
+        data.forEach(item => {
+            if(item.type && item.type.trim() !== "") {
+                types.add(item.type);
+            } else {
+                types.add("Update");
+            }
+        });
+        const sortedTypes = Array.from(types).sort();
+        const currentVal = typeFilter.value;
+        
+        typeFilter.innerHTML = '<option value="all">🏷️ 全部分类</option>';
+        sortedTypes.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = `🏷️ ${t}`;
+            typeFilter.appendChild(opt);
+        });
+        
+        if(sortedTypes.includes(currentVal)) typeFilter.value = currentVal;
+    }
+
+    // --- 筛选逻辑 ---
+    function filterTimeline() {
+        const textFilter = searchInput.value.trim().toLowerCase();
+        const dateVal = dateFilter.value;
+        const typeVal = typeFilter.value;
+        
+        const items = document.querySelectorAll('.timeline-item');
+        let hasVisible = false;
+
+        items.forEach((item, index) => {
+            const originalData = defaultData[index];
+            const itemDateSimple = formatDateSimple(originalData.date);
+            const itemType = originalData.type || "Update";
+            
+            let dateMatch = (dateVal === 'all') || itemDateSimple.startsWith(dateVal);
+            let typeMatch = (typeVal === 'all') || (itemType === typeVal);
+            let textMatch = true;
+            if (textFilter !== "") {
+                const fullText = (originalData.ver + " " + originalData.date + " " + originalData.content + " " + (originalData.author || "")).toLowerCase();
+                textMatch = fullText.includes(textFilter);
+            }
+
+            if (dateMatch && typeMatch && textMatch) {
+                item.classList.remove('hidden');
+                item.classList.add('open'); 
+                
+                const contentDiv = item.querySelector('.log-content');
+                if (textFilter !== "") {
+                    let baseHtml = formatText(stripHtml(originalData.content || ""));
+                    contentDiv.innerHTML = applySearchHighlight(baseHtml, textFilter);
+                } else {
+                    // FIX: 这里同样增加判断，如果是HTML则不重复format
+                    if(originalData.content.includes('<a href=') || originalData.content.includes('<span class="highlight-title">')) {
+                         // 移除搜索高亮但保留HTML结构
+                         contentDiv.innerHTML = originalData.content.replace(/<span class="search-highlight">(.+?)<\/span>/g, '$1');
+                    } else {
+                        contentDiv.innerHTML = formatText(originalData.content);
+                    }
+                }
+                hasVisible = true;
+            } else {
+                item.classList.add('hidden');
+                item.classList.remove('open');
+            }
+        });
+        
+        if (textFilter === "" && dateVal === 'all' && typeVal === 'all') {
+            items.forEach((item, idx) => {
+                if(idx === 0) item.classList.add('open');
+                else item.classList.remove('open');
+            });
+        }
+        noResultsMsg.style.display = hasVisible ? 'none' : 'block';
+    }
+
+    function toggleEditMode() {
+        const isEditable = editToggle.checked;
+        const contents = document.querySelectorAll('.log-content');
+        contents.forEach(el => el.setAttribute('contenteditable', isEditable ? "true" : "false"));
+    }
+
+    function applySearchHighlight(html, term) {
+        if (!term) return html;
+        const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedTerm})(?![^<]*>)`, 'gi');
+        return html.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+
+    function stripHtml(html) {
+       let tmp = document.createElement("DIV");
+       tmp.innerHTML = html;
+       return tmp.textContent || tmp.innerText || "";
+    }
+
+    function formatDateSimple(rawDate) {
+        if (!rawDate) return "未知日期";
+        const dateObj = new Date(rawDate);
+        if (!isNaN(dateObj.getTime())) {
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        if (rawDate.includes(' ')) return rawDate.split(' ')[0];
+        return rawDate;
+    }
+
+    function formatText(rawString) {
+        if (!rawString) return "";
+        let html = rawString;
+        html = html.replace(/<br>/gi, '\n'); 
+        const urlRegex = /(https?:\/\/[^\s<]+)/g;
+        html = html.replace(urlRegex, function(url) {
+            return `<a href="${url}" target="_blank">${url}</a>`;
+        });
+        const keywords = ['【新增内容】', '【优化调整】', '【新活动】', '【修复】', '【新功能】', '【新增】'];
+        keywords.forEach(key => {
+            const regex = new RegExp(key, 'g');
+            html = html.replace(regex, `\n<span class="highlight-title">${key}</span>\n`);
+        });
+        html = html.replace(/([①-⑳])/g, '\n$1 ');
+        
+        // FIX: 增加 trim 防止首行出现空行被转为 <br>
+        html = html.split('\n').map(line => line.trim()).filter(line => line !== '').join('<br>');
+        return html;
+    }
+
+    // --- 导入解析 ---
+    function parseAndRender() {
+        const rawText = inputArea.value.trim();
+        const linkVal = sourceUrlInput.value.trim();
+        
+        if (linkVal) {
+            sourceLink = linkVal;
+            renderSourceButton();
+        }
+
+        if (!rawText) return;
+        
+        const lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
+        if (lines.length < 2) { alert("表格数据行数不足"); return; }
+
+        let headerIndex = -1;
+        for(let i=0; i<lines.length; i++) {
+            if(lines[i].includes('|')) { headerIndex = i; break; }
+        }
+        if(headerIndex === -1) { alert("未检测到Markdown表格"); return; }
+
+        const headers = lines[headerIndex].split('|').map(h => h.trim().toLowerCase());
+        const colMap = { ver: -1, date: -1, content: -1, type: -1, author: -1 };
+        headers.forEach((h, idx) => {
+            if (h.includes('版本') || h.includes('ver')) colMap.ver = idx;
+            else if (h.includes('日期') || h.includes('date')) colMap.date = idx;
+            else if (h.includes('内容') || h.includes('content') || h.includes('日志')) colMap.content = idx;
+            else if (h.includes('分类') || h.includes('type')) colMap.type = idx;
+            else if (h.includes('发布人') || h.includes('author')) colMap.author = idx;
+        });
+
+        if (colMap.content === -1) {
+            if(!confirm("未能自动识别列名。是否尝试按默认顺序导入？")) return;
+            colMap.ver=1; colMap.date=2; colMap.content=3; colMap.type=4; colMap.author=5;
+        }
+
+        const parsedData = [];
+        for(let i = headerIndex + 1; i < lines.length; i++) {
+            const line = lines[i];
+            if(!line.includes('|') || line.replace(/\|/g,'').replace(/-/g,'').trim() === '') continue;
+            
+            const parts = line.split('|');
+            const getVal = (idx) => (idx > -1 && idx < parts.length) ? parts[idx].trim() : "";
+            const rawContent = getVal(colMap.content);
+            const cleanDate = formatDateSimple(getVal(colMap.date));
+
+            if(rawContent || cleanDate) {
+                parsedData.push({
+                    ver: getVal(colMap.ver),
+                    date: cleanDate,
+                    content: rawContent, 
+                    type: getVal(colMap.type) || "Update",
+                    author: getVal(colMap.author)
+                });
+            }
+        }
+
+        if (parsedData.length > 0) {
+            renderTimeline(parsedData);
+            closeModal();
+            searchInput.value = '';
+            dateFilter.value = 'all';
+            typeFilter.value = 'all';
+        } else {
+            alert("未解析到数据。");
+        }
+    }
+
+    // --- 保存功能 (已修复：不再使用正则清理 input) ---
+    function saveHtmlFile() {
+        // 1. 还原筛选视图，确保数据是最全的状态
+        searchInput.value = '';
+        dateFilter.value = 'all';
+        typeFilter.value = 'all';
+        filterTimeline();
+
+        // 2. 收集当前 DOM 中的最新数据
+        const currentItems = document.querySelectorAll('.timeline-item');
+        const dataToSave = [];
+        currentItems.forEach(item => {
+            const contentDiv = item.querySelector('.log-content');
+            dataToSave.push({
+                ver: item.getAttribute('data-ver'),
+                date: item.getAttribute('data-date'),
+                type: item.getAttribute('data-type'),
+                author: item.getAttribute('data-author'),
+                content: contentDiv.innerHTML
+            });
+        });
+
+        // 3. 核心修复：在获取 HTML 字符串之前，手动清理输入框的 value 属性
+        searchInput.setAttribute('value', '');
+        sourceUrlInput.setAttribute('value', '');
+
+        // 4. 获取当前页面的完整 HTML
+        let htmlContent = document.documentElement.outerHTML;
+        
+        // 5. 构建新的数据块
+        const newDataBlock = `/*__DATA_START__*/
+    let defaultData = ${JSON.stringify(dataToSave, null, 4)};
+    let sourceLink = "${sourceLink}";
+    /*__DATA_END__*/`;
+        
+        // 6. 仅替换数据锚点区域，不触碰其他 JS 代码
+        const regex = /\/\*__DATA_START__\*\/[\s\S]*?\/\*__DATA_END__\*\//;
+        
+        if (regex.test(htmlContent)) {
+            htmlContent = htmlContent.replace(regex, newDataBlock);
+
+            const blob = new Blob([htmlContent], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const today = new Date().toISOString().split('T')[0];
+            a.href = url;
+            a.download = `KS_更新日志_${today}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert("已保存！数据已成功写入文件。");
+        } else {
+            alert("保存失败：未找到数据锚点标记，请勿手动修改 HTML 源码中的 START/END 注释。");
+        }
+    }
+
+    function toggleItem(header) {
+        header.parentElement.parentElement.classList.toggle('open');
+    }
+    function openModal() {
+        modal.classList.add('active');
+        sourceUrlInput.value = sourceLink;
+        setTimeout(() => sourceUrlInput.focus(), 100);
+    }
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+</script>
+
+
+</body></html>

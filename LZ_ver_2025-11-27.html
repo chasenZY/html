@@ -1,0 +1,1250 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Z版本更新日志</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&amp;family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d7e1ec 100%);
+            --primary-blue: #0984e3;
+            --deep-blue: #2c3e50;
+            --link-color: #0984e3;
+            --text-main: #2d3436;
+            --text-light: #636e72;
+            --card-bg: #ffffff;
+            --tag-major-bg: #ff7675;
+            --tag-major-text: #d63031;
+            --tag-patch-bg: #55efc4;
+            --tag-patch-text: #00b894;
+            --highlight-bg: #ffeaa7;
+            --highlight-text: #2d3436;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* --- 头部区域 --- */
+        header {
+            background: linear-gradient(to right, #2c3e50, #34495e);
+            color: white;
+            padding: 60px 20px 30px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            margin-top: 10px;
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 300;
+            margin-bottom: 25px;
+        }
+
+        /* --- 控制栏 --- */
+        .controls-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            max-width: 900px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 5;
+        }
+
+        .filter-select {
+            padding: 12px 15px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            outline: none;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 10px auto;
+            padding-right: 30px;
+            min-width: 130px;
+        }
+        .filter-select option { background: #2c3e50; color: white; }
+
+        .search-wrapper {
+            position: relative;
+            flex-grow: 1;
+            min-width: 200px;
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.7);
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            outline: none;
+            backdrop-filter: blur(5px);
+        }
+        .search-input::placeholder { color: rgba(255,255,255,0.6); }
+
+        .edit-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 36px;
+            height: 20px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--tag-patch-bg); }
+        input:checked + .slider:before { transform: translateX(16px); }
+
+        /* --- 按钮组 --- */
+        .header-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none; 
+        }
+
+        .action-btn:hover {
+            background: white;
+            color: var(--deep-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn-save { background: rgba(85, 239, 196, 0.2); border-color: rgba(85, 239, 196, 0.5); }
+        .btn-source { background: rgba(116, 185, 255, 0.2); border-color: rgba(116, 185, 255, 0.5); display: none; }
+
+        /* --- 模态弹窗 --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(44, 62, 80, 0.8); z-index: 1000;
+            justify-content: center; align-items: center; backdrop-filter: blur(3px);
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+        .modal-box {
+            background: white; width: 90%; max-width: 600px; border-radius: 12px; padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 15px;
+            transform: scale(0.9); transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--deep-blue); }
+        .modal-desc { font-size: 0.9rem; color: var(--text-light); }
+        
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-label { font-size: 0.85rem; font-weight: 600; color: #636e72; }
+        .modal-input {
+            width: 100%; padding: 10px; border: 1px solid #dfe6e9; border-radius: 6px;
+            font-family: 'Roboto', sans-serif; font-size: 0.9rem; outline: none; background: #f8f9fa;
+        }
+        .modal-textarea {
+            width: 100%; height: 150px; padding: 15px; border: 1px solid #dfe6e9;
+            border-radius: 8px; font-family: monospace; font-size: 0.85rem;
+            resize: vertical; outline: none; background: #f8f9fa;
+        }
+        .modal-input:focus, .modal-textarea:focus { border-color: var(--primary-blue); background: white; }
+        
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+        .btn { padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; }
+        .btn-cancel { background: #f1f2f6; color: #636e72; }
+        .btn-cancel:hover { background: #dfe6e9; }
+        .btn-confirm { background: var(--primary-blue); color: white; }
+        .btn-confirm:hover { background: #0984e3; }
+
+        /* --- 时间轴样式 --- */
+        .container { max-width: 900px; margin: 50px auto; padding: 0 20px; min-height: 400px; }
+        .timeline { position: relative; padding-bottom: 50px; }
+        .timeline::before {
+            content: ''; position: absolute; top: 0; bottom: 0; left: 24px;
+            width: 4px; background: #dfe6e9; border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative; margin-bottom: 40px; padding-left: 70px;
+            opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s forwards;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .timeline-item.hidden { display: none; }
+        .timeline-marker {
+            position: absolute; left: 14px; top: 20px; width: 24px; height: 24px;
+            background: var(--card-bg); border: 4px solid var(--primary-blue);
+            border-radius: 50%; z-index: 2; box-shadow: 0 0 0 4px rgba(9, 132, 227, 0.2);
+            transition: all 0.3s ease;
+        }
+        .timeline-item:hover .timeline-marker {
+            background: var(--primary-blue); box-shadow: 0 0 15px rgba(9, 132, 227, 0.6); transform: scale(1.1);
+        }
+        .timeline-card {
+            background: var(--card-bg); border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(45, 52, 54, 0.08);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.5); overflow: hidden;
+        }
+        .timeline-item.open .timeline-card {
+            box-shadow: 0 15px 35px rgba(9, 132, 227, 0.15); border-color: rgba(9, 132, 227, 0.3);
+        }
+        .card-header {
+            padding: 18px 25px; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+            border-bottom: 1px solid #f1f2f6; user-select: none;
+        }
+        .card-header:hover { background: #f1f2f6; }
+        .version-group { display: flex; flex-direction: column; }
+        .version-number { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.4rem; color: var(--deep-blue); line-height: 1.2; }
+        .version-date { font-size: 0.85rem; color: var(--text-light); margin-top: 4px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;}
+        .author-tag { color: var(--primary-blue); font-weight: 500; display: inline-flex; align-items: center; gap: 3px; margin-left: 8px; }
+        .meta-group { display: flex; align-items: center; gap: 15px; }
+        .tag { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .tag.major { background-color: rgba(255, 118, 117, 0.15); color: var(--tag-major-text); border: 1px solid rgba(255, 118, 117, 0.3); }
+        .tag.patch { background-color: rgba(85, 239, 196, 0.15); color: var(--tag-patch-text); border: 1px solid rgba(85, 239, 196, 0.3); }
+        .toggle-icon {
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; background: #dfe6e9; color: #636e72; font-size: 0.8rem;
+            transition: transform 0.4s ease;
+        }
+        .timeline-item.open .toggle-icon { transform: rotate(180deg); background: var(--primary-blue); color: white; }
+        
+        .card-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, opacity 0.5s ease;
+            opacity: 0; background-color: #fff;
+        }
+        .timeline-item.open .card-body { max-height: 4000px; opacity: 1; }
+        
+        /* 内容区样式 (FIX: Removed pre-wrap to avoid double line breaks) */
+        .log-content { 
+            padding: 25px; 
+            font-size: 0.95rem; 
+            color: #444; 
+            /* white-space: pre-wrap;  <-- 已移除此行，解决保存后换行错乱问题 */
+            outline: none; 
+            word-wrap: break-word; 
+        }
+        .log-content[contenteditable="true"] {
+            background-color: #fcfcfc;
+            border: 1px dashed #ccc;
+        }
+
+        /* 链接样式 */
+        .log-content a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed var(--link-color);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .log-content a:hover {
+            color: var(--deep-blue);
+            border-bottom-style: solid;
+        }
+
+        .highlight-title {
+            color: var(--primary-blue); font-weight: 700; display: inline-block; margin-top: 15px;
+            margin-bottom: 8px; background: rgba(9, 132, 227, 0.08); padding: 2px 8px; border-radius: 4px;
+        }
+        .log-placeholder { text-align: center; padding: 30px; color: #b2bec3; border: 2px dashed #dfe6e9; border-radius: 8px; }
+        .no-results { text-align: center; padding: 40px; color: #636e72; font-style: italic; display: none; }
+
+        .search-highlight {
+            background-color: var(--highlight-bg);
+            color: var(--highlight-text);
+            padding: 0 2px;
+            border-radius: 2px;
+            font-weight: bold;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 600px) {
+            .controls-container { flex-direction: column; align-items: stretch; }
+            .filter-select, .search-wrapper { width: 100%; }
+            .edit-mode-toggle { justify-content: center; background: rgba(0,0,0,0.3); }
+            header { padding-top: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-actions">
+            <!-- 源数据按钮 -->
+            <button id="btnSource" class="action-btn btn-source" onclick="openSourceLink()" title="https://nqjs83ycu0f.feishu.cn/wiki/ChnMwSmymidiarkEkdecxz15nJf?from=from_copylink" style="display: flex;">🔗 源数据</button>
+            <button class="action-btn btn-import" onclick="openModal()">📥 导入</button>
+            <button class="action-btn btn-save" onclick="saveHtmlFile()">💾 保存更改</button>
+        </div>
+        
+        <h1>LZ Changelog</h1>
+        <div class="subtitle">Last Z 版本更新历史记录 (数据源:Discord)</div>
+
+        <!-- 增强的控制栏 -->
+        <div class="controls-container">
+            <!-- 日期筛选 -->
+            <select id="dateFilter" class="filter-select" onchange="filterTimeline()"><option value="all">📅 全部日期</option><option value="2025-11">📅 2025-11</option><option value="2025-10">📅 2025-10</option><option value="2025-09">📅 2025-09</option><option value="2025-08">📅 2025-08</option></select>
+
+            <!-- 分类筛选 -->
+            <select id="typeFilter" class="filter-select" onchange="filterTimeline()"><option value="all">🏷️ 全部分类</option><option value="更新通知&amp;说明">🏷️ 更新通知&amp;说明</option><option value="重大更新">🏷️ 重大更新</option></select>
+
+            <!-- 搜索框 -->
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索内容..." onkeyup="filterTimeline()" value="">
+            </div>
+
+            <!-- 编辑模式开关 -->
+            <label class="edit-mode-toggle">
+                <div class="toggle-switch">
+                    <input type="checkbox" id="editModeToggle" onchange="toggleEditMode()">
+                    <span class="slider"></span>
+                </div>
+                <span>🔧 编辑模式</span>
+            </label>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="timeline" id="timeline-root">
+                <div class="timeline-item open" style="animation-delay: 0s" data-ver="" data-date="2025-11-24" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-11-24 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 解锁新精通技能（适用于S1-S216）：Season 3的Lv.50战斗精通“快速打击”允许手动提前发起集结攻击，每周最多5次（每周一重置）；Season 4的Lv.55战斗精通“高级治疗”使野外战斗胜利后，25%的轻伤单位恢复至满血并更快准备再次战斗。<br>② 世界地图操控更流畅：世界地图战斗中新增“拖动返回”指令，可将部队送回总部，无需点击返回按钮，操作更便捷。<br><span class="highlight-title">【优化调整】</span><br>① 流浪者营地-流浪商人派遣玩法优化：简化派遣流程，联盟贸易奖励领取从“邮件”移至“领取日志”；提升基础奖励质量，每次派遣和领取幸存者贸易礼物均有机会获得惊喜大奖。<br>② 感恩节之星优化（适用于S1-S32）：降低感恩节嘉年华中感恩节之星成就难度，达成1、2、3级所需火鸡数量分别降至3000、5000、10000，更新后玩家再次获得火鸡时当前感恩节之星等级将刷新。<br>③ 国家统治者钻石矿调整（适用于S33-S420）：首都被占领后，原钻石矿不再生成，改为在首都周围生成6个大型钻石矿脉，允许更多幸存者同时采矿。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.1s" data-ver="" data-date="2025-11-17" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-11-17 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 联盟成员位置跳转：R4和R5成员可在联盟成员页面查看其他成员的总部位置。<br><span class="highlight-title">【优化调整】</span><br>① 峡谷冲突队长增益：首杀队长增益从“行军速度+50%”调整为“建筑占领时间成本-50%”；对峡谷队长造成伤害可获得个人积分。<br>② 总统角色优化：新增本地时间与启示录时间的切换功能；改进官职相关界面显示。<br>③ 联盟设置优化：“联盟邮件”和“发布招募”已移至联盟的【管理】标签页。<br>④ 冲突情报调整：冲突情报标记持续时间从1小时缩短至10分钟；支持跨州追踪目标。<br>⑤ 生存传奇优化：幸存者可直接拖拽小队攻击生存传奇僵尸，操作更流畅；生存传奇的集结消息和分享会显示难度等级，过期集结分享自动从聊天中消失；若幸存者搬迁或总部耐久度归零，其传奇僵尸刷新点将重置。<br>⑥ 北极冰坑调整（针对S3幸存者）：将总部搬迁至冰坑区域后，攻击 tundra Titan 可获得3倍积分加成。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.2s" data-ver="" data-date="2025-11-11" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-11-11 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 更多游戏内通知：新增多种消息通知选项，幸存者可在设置中启用或管理通知，离线时也能接收系统提醒。<br>② 新建筑详情列表：可从建造菜单或建造者界面访问，能一目了然查看所有建筑的详细信息和状态。<br>③ 个人资料装饰“权力王座”：VIP 18的幸存者可通过系统邮件领取专属个人资料装饰，激活后个人资料将展示全新 regal 外观。<br>④ 外观商店更新：新增Laura“海岸寒意”、Amelia“银色冲浪”、Katrina“电子天后”服装（对应英雄解锁后商店可见）；新增“Avatar Frame - Dapper Days”“Avatar Frame - Whispered Rose”头像框；新增装饰建筑“Blush Bay”。<br>⑤ 装饰大厅开放：总部达到11级可建造，引入装饰收集评分系统，激活或升级装饰可获得收集点数，达到新等级可领取专属奖励，同时新增“通用装饰碎片”可用于升级多数装饰。<br><span class="highlight-title">【优化调整】</span><br>① 联盟对决切换联盟冷却调整：联盟对决期间切换联盟，当日无法为新联盟贡献对决点数或领取每日排名奖励，个人点数和个人点数宝箱不受影响，次日00:00（启示录时间）重置后可开始为新联盟贡献。<br>② 装饰建筑优化：修复了“秩序白银守卫”装饰的描述。<br>③ 联盟科技图标优化：全面更新联盟科技图标，新设计有助于更清晰快速识别不同科技。<br>④ 部队战力优化：修复特定场景下英雄专属装备的战力计算差异，优化部队战力计算逻辑，现已包含改装载具技能。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.30000000000000004s" data-ver="" data-date="2025-11-04" data-type="更新通知&amp;说明" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-11-04 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">更新通知&amp;说明</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 服务器合并时间：11月4日00:00–01:00（启示录时间），针对1–32号部分州。<br>② 合并影响：合并期间受影响州暂时无法登录，部分游戏内事件和数据将被整合与重置，仅涉及参与合并的州。<br>③ 受影响事件：<br>- 竞技场：11月4日至5日关闭。<br>- 全面戒备排名：合并当天不可用。<br>- 僵尸围城活动：暂时关闭，待所有受影响州完成合并后重新开放。<br>- 矿区混战活动：关闭，11月10日恢复正常。<br>- 狂怒领主活动：合并后重置，排名根据伤害重新计算。<br>- 暴君活动排名：合并后清除。<br>④ 其他数据影响：通过[Hot Events]入口进入的活动进度可能丢失，各州排行榜将被整合并刷新。<br>⑤ 重要提示：参与合并的州将按顺序下线。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.4s" data-ver="" data-date="2025-10-22" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-10-22 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 服务器合并计划：11月4日对1-32号部分服务器进行合并，以优化生态并提升玩家体验，合并期间游戏将暂时无法访问，其他服务器部分功能和活动可能受影响，玩家需提前规划游戏活动<br>② 合并范围：2、3、7服合并至1服；5服合并至4服；9服合并至8服；6服合并至11服；25服合并至22服；29服合并至27服，未列出的服务器不在此次合并范围内<br>③ 重要说明：合并后所有角色数据保留，若账号在多服有角色可自由选择登录；部分活动进度可能重置或不继承，最终详情请以合并后游戏内信息为准<br>④ 后续计划：此次为合并计划第一阶段，后续将根据生态稳定性和服务器数据情况分阶段进行，未来计划请关注官方公告<br>⑤ 迁移交流：创建了新的迁移频道，可加入交流分享想法，链接为👉 #💼｜migration-event</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.5s" data-ver="" data-date="2025-10-22" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-10-22 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① S1-S32服务器的万圣节活动已开启。<br>② S33及之后服务器的万圣节活动也将开启，活动包含一款酷炫的HQ皮肤。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.6000000000000001s" data-ver="" data-date="2025-10-21" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-10-21 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① VIP训练特权调整：VIP15新增专属增益“部队训练容量+100%”，VIP16新增专属增益“部队训练容量+200%”；<br>② 新增科技“战术大师”（适用于S1-S48）：解锁条件为【建军】研究进度达100%且实验室等级31级，可全面强化英雄与部队以提升战力；<br>③ 新增可发送恋爱短信角色：Selena、Nyx、Sakura。<br><span class="highlight-title">【优化调整】</span><br>① 指挥部皮肤属性优化：已装备指挥部皮肤属性与同皮肤拥有属性合并，幸存者可自由选择喜欢的指挥部皮肤且不损失属性加成；<br>② 跨州传送规则优化：处于跨州状态时，选择本州特定返回位置消耗1个高级传送器；通过活动页面或点击左上角返回按钮返回本州仍免费，不消耗道具。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.7000000000000001s" data-ver="" data-date="2025-10-13" data-type="更新通知&amp;说明" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-10-13 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">更新通知&amp;说明</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【优化调整】</span><br>① 服务器性能升级：为提升游戏体验，将对1-416服进行服务器优化；<br>② 维护安排：维护时间为2025/10/13 4:30~4:40（末日时间），期间玩家无法进入游戏，请提前规划活动避免不便；<br>③ 补偿说明：升级完成后，1-416服所有玩家将通过游戏内邮件收到补偿。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.8s" data-ver="" data-date="2025-09-30" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-09-30 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① [Champion Duel]投注系统回归：于2025年10月3日正式上线，带来全面升级的系统和全新体验。<br>② 全新[投注券]：作为专属投注货币，无需钻石，幸存者可自由参与每轮比赛预测；正确预测可获得丰厚[投注券]奖励，预测失败将消耗所押注的投注券且不退还；当前Champion Duel结束后，所有未使用的投注券将被收回。<br>③ 专属兑换商店：可使用投注获得的投注券在[投注商店]兑换心仪奖励。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 0.9s" data-ver="" data-date="2025-09-28" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-09-28 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① Message Recall：新增消息撤回功能，幸存者可点击撤回自己发送的文本或图片消息，还可复制或回复已发送消息。<br>② Love Text：丰富了S2-Alma和S2-Bella的内容，达到第二季及以上的幸存者可与她们聊天。<br>③ Account Linking：新增功能，现在可在设置中关联Game Center账户，以同步成就和排行榜数据。<br><span class="highlight-title">【优化调整】</span><br>① State Ruler：优化了入侵权争夺阶段联盟积分的计算方式，联盟成员获得的个人积分现已计入联盟总分。<br>② Hero Preview：改进后可在英雄列表中预览已装备的英雄皮肤。<br>③ Canyon Clash：对峡谷建筑占领规则进行调整，包括建筑需持续占领30秒后变更所有权，且移除建筑变更所有权后的30秒保护期。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 1s" data-ver="" data-date="2025-09-24" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-09-24 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① [总统邮件]优化：副总统可发送总统邮件，在总统府界面的法令部分编辑发送。<br>② 新增[国家徽章]：获得3次国家统治者冠军可解锁[Spectacular State]徽章，可在总统府→国家徽章中查看。<br><span class="highlight-title">【优化调整】</span><br>① [竞技场显示]优化：历史界面中的对手实力和阵容现在将显示战斗时的数据。<br>② [峡谷冲突]改进：医院中的受伤单位不再阻碍进入战场，进入战场的幸存者将携带总部当前可用的单位数量。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 1s" data-ver="" data-date="2025-09-24" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-09-24 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 音乐嘉年华活动即将在所有服务器上线：S1-S32服务器已开启，其他所有服务器将于9月25日UTC-2正式启动。<br>② 活动反馈渠道：关于该活动的任何反馈，请在#deleted-channel频道分享。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 1s" data-ver="" data-date="2025-09-15" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-09-15 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 新增礼物：[羁绊之心]在[外观商店]上线，赠送可激活聊天特效；<br>② 新增消防请求功能：总部起火时，世界视图中总部上方会出现请求消防按钮；<br>③ 新增英雄外观与皮肤：包括Mia - 巴伐利亚女仆英雄外观，以及音乐嘉年华总部皮肤、头像框、聊天泡泡、总部光环，均可通过[礼包]或活动上线后[参与活动]获取。<br><span class="highlight-title">【优化调整】</span><br>① [峡谷冲突]优化：匹配规则改为根据多支部队的最高历史战力匹配，而非当前战力；<br>② [首都官职任命]优化：总统职位持有者可自愿辞职并申请其他职位，职位申请候选人名单从20人扩充至50人；<br>③ [跨州传送体验]改进：可直接点击其他州的地块完成传送，世界地图缩略图显示[和平护盾]状态效果以提升清晰度；<br>④ [改装载具芯片]改进：芯片 crafting入口移至芯片界面便于制作，芯片界面新增属性摘要供快速查看，制作界面添加芯片图鉴，显示所有芯片的满星属性与技能。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 1s" data-ver="" data-date="2025-09-08" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-09-08 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① [Love Texts]中新增角色故事：Amelia、Evelyn、Scarlett、Oliveira。<br>② [Item Recycling]：新增蓝、紫色技能书回收功能；当幸存者所有蓝/紫色品质英雄的1、2、3技能均升至30级后，多余技能书可回收为基础资源随机宝箱。<br><span class="highlight-title">【优化调整】</span><br>① [Radar Events]优化：[Newbie Exclusive]任务失败时将返还消耗的燃料。<br>② [Zombie Siege]：新增下一波倒计时提示，提升对攻击波次的感知并增强协同防御效率；新增查看当前防守的联盟成员功能；攻破幸存者总部的僵尸将永久消失，不再返回附近城镇；优化僵尸模型与动画。<br>③ [Season Mastery]调整：移除参与自动集结的赛季经验奖励。<br>④ [Canyon Clash]改进：在战场攻击其他幸存者总部不再消耗燃料。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 1s" data-ver="" data-date="2025-09-01" data-type="重大更新" data-author="lastz_offical">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-09-01 <span class="author-tag">👤 lastz_offical</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① [Season Mastery]技能（适用于S1-S88）：战斗路径30级技能[Charge Banner]现已开放，放置在空间上的旗帜范围内的所有友军部队获得战斗加成，多个旗帜现在可以叠加。<br>② [Season Mastery]技能（适用于S1-S88）：支援路径30级技能[Vault Master]调整，每位幸存者的每日战利品尝试次数从3次减少到2次。<br><span class="highlight-title">【优化调整】</span><br>① [Yellow Rose Gifting Lucky Number]优化：幸运数字由系统每周从1-10中随机选择，若幸存者送花数量与幸运数字一致，即可触发福利，且新增了更多种类的幸运数字奖励。<br>② [Canyon Clash]调整：联盟人数需至少15人才能参与战场匹配，且在匹配阶段可以调整指挥官分配。<br>③ [Capital Official Applications]改进：新增资格条件，符合总统设定标准的幸存者现在可以申请官职，且首都角色生效时长从1小时缩短至10分钟。<br>④ [Hero Honor Level]调整：升级 Toxic Garden、Dawn Tower、Steel Factory 等建筑可提升英雄荣誉等级上限并提供额外部队加成。<br>⑤ 改进了总部搬迁体验。<br>⑥ 优化了联盟集合点设置体验。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 1s" data-ver="" data-date="2025-08-22" data-type="重大更新" data-author="nyx_doll">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-08-22 <span class="author-tag">👤 nyx_doll</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① Gold Brick Mall现已上线：玩家可享受优惠活动，点击链接<a href="https://pay.last-z.com。" target="_blank">https://pay.last-z.com。</a><br>② Gold Brick Bonus：购买金砖可获得5%的金砖奖励，金砖可用于购买任何游戏内礼包。<br>③ 购买金砖方式：使用个人UID登录商城，选择任意想要购买的礼包即可获得金砖。<br>④ 使用金砖方式：获得金砖后，在游戏内选择任意礼包，点击“确认”即可兑换，剩余金砖可在主屏幕头像右侧查看。<br>⑤ 注意事项：受监管限制，部分地区无法访问全球金砖官方网站。</div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="timeline-item" style="animation-delay: 1s" data-ver="" data-date="2025-08-11" data-type="重大更新" data-author="nyx_doll">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">Update</span>
+                                <span class="version-date">📅 2025-08-11 <span class="author-tag">👤 nyx_doll</span></span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag major">重大更新</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false"><span class="highlight-title">【新增内容】</span><br>① 心跳庆典活动：2025年8月13日00:00开启，持续7天，将在1-32战区率先开启并逐步向符合条件的战区开放，活动期间空气中弥漫着爱意，幸存者将开启浪漫之旅，还有玫瑰和甜蜜惊喜等待着大家。<br>② 心动好礼：开启庆典礼盒积累进度点可解锁奖励，开启礼盒能获得红玫瑰并送给幸存者朋友，增加自身魅力值和心之点数可赢取心动奖励；购买心动特惠礼包可获得更多奖励，包括专属心动装饰建筑、头像框、卡特里娜新皮肤-电子音乐天堂等。<br>③ 魅力之星与心之之星：向其他幸存者赠送礼物可增加自身的心之点数和对方的魅力值，将角逐桂冠。<br>④ 礼盒补给：通过指定渠道获取更多庆典礼盒，可解锁庆典邂逅并赢取丰厚奖品。<br>⑤ 庆典惊喜：向 fellow survivors 展示爱意和惊喜，有 limited 心之点数庆典表情等待。<br>⑥ 心之点数礼物：活动期间每日登录可领取庆典礼盒；购买礼物并每日登录可额外获得珍贵奖励。<br>⑦ 注意事项：宣传图为非官方奖励，具体请以游戏内活动信息为准；更多信息请参见活动规则。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div id="noResults" class="no-results" style="display: none;">未找到匹配的更新记录 ❄️</div>
+    </div>
+
+    <!-- 导入弹窗 -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-box">
+            <div class="modal-title">数据导入设置</div>
+            
+            <div class="input-group">
+                <label class="input-label">📌 源数据链接 (可选，填写后右上角显示跳转按钮)</label>
+                <input type="text" id="sourceUrlInput" class="modal-input" placeholder="例如: https://discord.com/channels/..." value="">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">📊 Markdown 表格数据</label>
+                <textarea class="modal-textarea" id="markdownInput" placeholder="| 版本 | 日期 | 更新内容 | 更新分类 | 发布人 |
+| 1.0.1 | 2025/11/26 | 测试内容... | 重大更新 | Admin |"></textarea>
+            </div>
+            
+            <div class="modal-desc">
+                系统将自动识别表头并按<b>日期倒序</b>排列。支持列：日期, 内容, 分类, 发布人。
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-confirm" onclick="parseAndRender()">确认导入</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- 数据区域 (重要：请勿删除 START/END 标记) ---
+    /*__DATA_START__*/
+    let defaultData = [
+    {
+        "ver": "",
+        "date": "2025-11-24",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 解锁新精通技能（适用于S1-S216）：Season 3的Lv.50战斗精通“快速打击”允许手动提前发起集结攻击，每周最多5次（每周一重置）；Season 4的Lv.55战斗精通“高级治疗”使野外战斗胜利后，25%的轻伤单位恢复至满血并更快准备再次战斗。<br>② 世界地图操控更流畅：世界地图战斗中新增“拖动返回”指令，可将部队送回总部，无需点击返回按钮，操作更便捷。<br><span class=\"highlight-title\">【优化调整】</span><br>① 流浪者营地-流浪商人派遣玩法优化：简化派遣流程，联盟贸易奖励领取从“邮件”移至“领取日志”；提升基础奖励质量，每次派遣和领取幸存者贸易礼物均有机会获得惊喜大奖。<br>② 感恩节之星优化（适用于S1-S32）：降低感恩节嘉年华中感恩节之星成就难度，达成1、2、3级所需火鸡数量分别降至3000、5000、10000，更新后玩家再次获得火鸡时当前感恩节之星等级将刷新。<br>③ 国家统治者钻石矿调整（适用于S33-S420）：首都被占领后，原钻石矿不再生成，改为在首都周围生成6个大型钻石矿脉，允许更多幸存者同时采矿。"
+    },
+    {
+        "ver": "",
+        "date": "2025-11-17",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 联盟成员位置跳转：R4和R5成员可在联盟成员页面查看其他成员的总部位置。<br><span class=\"highlight-title\">【优化调整】</span><br>① 峡谷冲突队长增益：首杀队长增益从“行军速度+50%”调整为“建筑占领时间成本-50%”；对峡谷队长造成伤害可获得个人积分。<br>② 总统角色优化：新增本地时间与启示录时间的切换功能；改进官职相关界面显示。<br>③ 联盟设置优化：“联盟邮件”和“发布招募”已移至联盟的【管理】标签页。<br>④ 冲突情报调整：冲突情报标记持续时间从1小时缩短至10分钟；支持跨州追踪目标。<br>⑤ 生存传奇优化：幸存者可直接拖拽小队攻击生存传奇僵尸，操作更流畅；生存传奇的集结消息和分享会显示难度等级，过期集结分享自动从聊天中消失；若幸存者搬迁或总部耐久度归零，其传奇僵尸刷新点将重置。<br>⑥ 北极冰坑调整（针对S3幸存者）：将总部搬迁至冰坑区域后，攻击 tundra Titan 可获得3倍积分加成。"
+    },
+    {
+        "ver": "",
+        "date": "2025-11-11",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 更多游戏内通知：新增多种消息通知选项，幸存者可在设置中启用或管理通知，离线时也能接收系统提醒。<br>② 新建筑详情列表：可从建造菜单或建造者界面访问，能一目了然查看所有建筑的详细信息和状态。<br>③ 个人资料装饰“权力王座”：VIP 18的幸存者可通过系统邮件领取专属个人资料装饰，激活后个人资料将展示全新 regal 外观。<br>④ 外观商店更新：新增Laura“海岸寒意”、Amelia“银色冲浪”、Katrina“电子天后”服装（对应英雄解锁后商店可见）；新增“Avatar Frame - Dapper Days”“Avatar Frame - Whispered Rose”头像框；新增装饰建筑“Blush Bay”。<br>⑤ 装饰大厅开放：总部达到11级可建造，引入装饰收集评分系统，激活或升级装饰可获得收集点数，达到新等级可领取专属奖励，同时新增“通用装饰碎片”可用于升级多数装饰。<br><span class=\"highlight-title\">【优化调整】</span><br>① 联盟对决切换联盟冷却调整：联盟对决期间切换联盟，当日无法为新联盟贡献对决点数或领取每日排名奖励，个人点数和个人点数宝箱不受影响，次日00:00（启示录时间）重置后可开始为新联盟贡献。<br>② 装饰建筑优化：修复了“秩序白银守卫”装饰的描述。<br>③ 联盟科技图标优化：全面更新联盟科技图标，新设计有助于更清晰快速识别不同科技。<br>④ 部队战力优化：修复特定场景下英雄专属装备的战力计算差异，优化部队战力计算逻辑，现已包含改装载具技能。"
+    },
+    {
+        "ver": "",
+        "date": "2025-11-04",
+        "type": "更新通知&说明",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 服务器合并时间：11月4日00:00–01:00（启示录时间），针对1–32号部分州。<br>② 合并影响：合并期间受影响州暂时无法登录，部分游戏内事件和数据将被整合与重置，仅涉及参与合并的州。<br>③ 受影响事件：<br>- 竞技场：11月4日至5日关闭。<br>- 全面戒备排名：合并当天不可用。<br>- 僵尸围城活动：暂时关闭，待所有受影响州完成合并后重新开放。<br>- 矿区混战活动：关闭，11月10日恢复正常。<br>- 狂怒领主活动：合并后重置，排名根据伤害重新计算。<br>- 暴君活动排名：合并后清除。<br>④ 其他数据影响：通过[Hot Events]入口进入的活动进度可能丢失，各州排行榜将被整合并刷新。<br>⑤ 重要提示：参与合并的州将按顺序下线。"
+    },
+    {
+        "ver": "",
+        "date": "2025-10-22",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 服务器合并计划：11月4日对1-32号部分服务器进行合并，以优化生态并提升玩家体验，合并期间游戏将暂时无法访问，其他服务器部分功能和活动可能受影响，玩家需提前规划游戏活动<br>② 合并范围：2、3、7服合并至1服；5服合并至4服；9服合并至8服；6服合并至11服；25服合并至22服；29服合并至27服，未列出的服务器不在此次合并范围内<br>③ 重要说明：合并后所有角色数据保留，若账号在多服有角色可自由选择登录；部分活动进度可能重置或不继承，最终详情请以合并后游戏内信息为准<br>④ 后续计划：此次为合并计划第一阶段，后续将根据生态稳定性和服务器数据情况分阶段进行，未来计划请关注官方公告<br>⑤ 迁移交流：创建了新的迁移频道，可加入交流分享想法，链接为👉 #💼｜migration-event"
+    },
+    {
+        "ver": "",
+        "date": "2025-10-22",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① S1-S32服务器的万圣节活动已开启。<br>② S33及之后服务器的万圣节活动也将开启，活动包含一款酷炫的HQ皮肤。"
+    },
+    {
+        "ver": "",
+        "date": "2025-10-21",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① VIP训练特权调整：VIP15新增专属增益“部队训练容量+100%”，VIP16新增专属增益“部队训练容量+200%”；<br>② 新增科技“战术大师”（适用于S1-S48）：解锁条件为【建军】研究进度达100%且实验室等级31级，可全面强化英雄与部队以提升战力；<br>③ 新增可发送恋爱短信角色：Selena、Nyx、Sakura。<br><span class=\"highlight-title\">【优化调整】</span><br>① 指挥部皮肤属性优化：已装备指挥部皮肤属性与同皮肤拥有属性合并，幸存者可自由选择喜欢的指挥部皮肤且不损失属性加成；<br>② 跨州传送规则优化：处于跨州状态时，选择本州特定返回位置消耗1个高级传送器；通过活动页面或点击左上角返回按钮返回本州仍免费，不消耗道具。"
+    },
+    {
+        "ver": "",
+        "date": "2025-10-13",
+        "type": "更新通知&说明",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【优化调整】</span><br>① 服务器性能升级：为提升游戏体验，将对1-416服进行服务器优化；<br>② 维护安排：维护时间为2025/10/13 4:30~4:40（末日时间），期间玩家无法进入游戏，请提前规划活动避免不便；<br>③ 补偿说明：升级完成后，1-416服所有玩家将通过游戏内邮件收到补偿。"
+    },
+    {
+        "ver": "",
+        "date": "2025-09-30",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① [Champion Duel]投注系统回归：于2025年10月3日正式上线，带来全面升级的系统和全新体验。<br>② 全新[投注券]：作为专属投注货币，无需钻石，幸存者可自由参与每轮比赛预测；正确预测可获得丰厚[投注券]奖励，预测失败将消耗所押注的投注券且不退还；当前Champion Duel结束后，所有未使用的投注券将被收回。<br>③ 专属兑换商店：可使用投注获得的投注券在[投注商店]兑换心仪奖励。"
+    },
+    {
+        "ver": "",
+        "date": "2025-09-28",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① Message Recall：新增消息撤回功能，幸存者可点击撤回自己发送的文本或图片消息，还可复制或回复已发送消息。<br>② Love Text：丰富了S2-Alma和S2-Bella的内容，达到第二季及以上的幸存者可与她们聊天。<br>③ Account Linking：新增功能，现在可在设置中关联Game Center账户，以同步成就和排行榜数据。<br><span class=\"highlight-title\">【优化调整】</span><br>① State Ruler：优化了入侵权争夺阶段联盟积分的计算方式，联盟成员获得的个人积分现已计入联盟总分。<br>② Hero Preview：改进后可在英雄列表中预览已装备的英雄皮肤。<br>③ Canyon Clash：对峡谷建筑占领规则进行调整，包括建筑需持续占领30秒后变更所有权，且移除建筑变更所有权后的30秒保护期。"
+    },
+    {
+        "ver": "",
+        "date": "2025-09-24",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① [总统邮件]优化：副总统可发送总统邮件，在总统府界面的法令部分编辑发送。<br>② 新增[国家徽章]：获得3次国家统治者冠军可解锁[Spectacular State]徽章，可在总统府→国家徽章中查看。<br><span class=\"highlight-title\">【优化调整】</span><br>① [竞技场显示]优化：历史界面中的对手实力和阵容现在将显示战斗时的数据。<br>② [峡谷冲突]改进：医院中的受伤单位不再阻碍进入战场，进入战场的幸存者将携带总部当前可用的单位数量。"
+    },
+    {
+        "ver": "",
+        "date": "2025-09-24",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 音乐嘉年华活动即将在所有服务器上线：S1-S32服务器已开启，其他所有服务器将于9月25日UTC-2正式启动。<br>② 活动反馈渠道：关于该活动的任何反馈，请在#deleted-channel频道分享。"
+    },
+    {
+        "ver": "",
+        "date": "2025-09-15",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 新增礼物：[羁绊之心]在[外观商店]上线，赠送可激活聊天特效；<br>② 新增消防请求功能：总部起火时，世界视图中总部上方会出现请求消防按钮；<br>③ 新增英雄外观与皮肤：包括Mia - 巴伐利亚女仆英雄外观，以及音乐嘉年华总部皮肤、头像框、聊天泡泡、总部光环，均可通过[礼包]或活动上线后[参与活动]获取。<br><span class=\"highlight-title\">【优化调整】</span><br>① [峡谷冲突]优化：匹配规则改为根据多支部队的最高历史战力匹配，而非当前战力；<br>② [首都官职任命]优化：总统职位持有者可自愿辞职并申请其他职位，职位申请候选人名单从20人扩充至50人；<br>③ [跨州传送体验]改进：可直接点击其他州的地块完成传送，世界地图缩略图显示[和平护盾]状态效果以提升清晰度；<br>④ [改装载具芯片]改进：芯片 crafting入口移至芯片界面便于制作，芯片界面新增属性摘要供快速查看，制作界面添加芯片图鉴，显示所有芯片的满星属性与技能。"
+    },
+    {
+        "ver": "",
+        "date": "2025-09-08",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① [Love Texts]中新增角色故事：Amelia、Evelyn、Scarlett、Oliveira。<br>② [Item Recycling]：新增蓝、紫色技能书回收功能；当幸存者所有蓝/紫色品质英雄的1、2、3技能均升至30级后，多余技能书可回收为基础资源随机宝箱。<br><span class=\"highlight-title\">【优化调整】</span><br>① [Radar Events]优化：[Newbie Exclusive]任务失败时将返还消耗的燃料。<br>② [Zombie Siege]：新增下一波倒计时提示，提升对攻击波次的感知并增强协同防御效率；新增查看当前防守的联盟成员功能；攻破幸存者总部的僵尸将永久消失，不再返回附近城镇；优化僵尸模型与动画。<br>③ [Season Mastery]调整：移除参与自动集结的赛季经验奖励。<br>④ [Canyon Clash]改进：在战场攻击其他幸存者总部不再消耗燃料。"
+    },
+    {
+        "ver": "",
+        "date": "2025-09-01",
+        "type": "重大更新",
+        "author": "lastz_offical",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① [Season Mastery]技能（适用于S1-S88）：战斗路径30级技能[Charge Banner]现已开放，放置在空间上的旗帜范围内的所有友军部队获得战斗加成，多个旗帜现在可以叠加。<br>② [Season Mastery]技能（适用于S1-S88）：支援路径30级技能[Vault Master]调整，每位幸存者的每日战利品尝试次数从3次减少到2次。<br><span class=\"highlight-title\">【优化调整】</span><br>① [Yellow Rose Gifting Lucky Number]优化：幸运数字由系统每周从1-10中随机选择，若幸存者送花数量与幸运数字一致，即可触发福利，且新增了更多种类的幸运数字奖励。<br>② [Canyon Clash]调整：联盟人数需至少15人才能参与战场匹配，且在匹配阶段可以调整指挥官分配。<br>③ [Capital Official Applications]改进：新增资格条件，符合总统设定标准的幸存者现在可以申请官职，且首都角色生效时长从1小时缩短至10分钟。<br>④ [Hero Honor Level]调整：升级 Toxic Garden、Dawn Tower、Steel Factory 等建筑可提升英雄荣誉等级上限并提供额外部队加成。<br>⑤ 改进了总部搬迁体验。<br>⑥ 优化了联盟集合点设置体验。"
+    },
+    {
+        "ver": "",
+        "date": "2025-08-22",
+        "type": "重大更新",
+        "author": "nyx_doll",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① Gold Brick Mall现已上线：玩家可享受优惠活动，点击链接<a href=\"https://pay.last-z.com。\" target=\"_blank\">https://pay.last-z.com。</a><br>② Gold Brick Bonus：购买金砖可获得5%的金砖奖励，金砖可用于购买任何游戏内礼包。<br>③ 购买金砖方式：使用个人UID登录商城，选择任意想要购买的礼包即可获得金砖。<br>④ 使用金砖方式：获得金砖后，在游戏内选择任意礼包，点击“确认”即可兑换，剩余金砖可在主屏幕头像右侧查看。<br>⑤ 注意事项：受监管限制，部分地区无法访问全球金砖官方网站。"
+    },
+    {
+        "ver": "",
+        "date": "2025-08-11",
+        "type": "重大更新",
+        "author": "nyx_doll",
+        "content": "<span class=\"highlight-title\">【新增内容】</span><br>① 心跳庆典活动：2025年8月13日00:00开启，持续7天，将在1-32战区率先开启并逐步向符合条件的战区开放，活动期间空气中弥漫着爱意，幸存者将开启浪漫之旅，还有玫瑰和甜蜜惊喜等待着大家。<br>② 心动好礼：开启庆典礼盒积累进度点可解锁奖励，开启礼盒能获得红玫瑰并送给幸存者朋友，增加自身魅力值和心之点数可赢取心动奖励；购买心动特惠礼包可获得更多奖励，包括专属心动装饰建筑、头像框、卡特里娜新皮肤-电子音乐天堂等。<br>③ 魅力之星与心之之星：向其他幸存者赠送礼物可增加自身的心之点数和对方的魅力值，将角逐桂冠。<br>④ 礼盒补给：通过指定渠道获取更多庆典礼盒，可解锁庆典邂逅并赢取丰厚奖品。<br>⑤ 庆典惊喜：向 fellow survivors 展示爱意和惊喜，有 limited 心之点数庆典表情等待。<br>⑥ 心之点数礼物：活动期间每日登录可领取庆典礼盒；购买礼物并每日登录可额外获得珍贵奖励。<br>⑦ 注意事项：宣传图为非官方奖励，具体请以游戏内活动信息为准；更多信息请参见活动规则。"
+    }
+];
+    let sourceLink = "https://nqjs83ycu0f.feishu.cn/wiki/ChnMwSmymidiarkEkdecxz15nJf?from=from_copylink";
+    /*__DATA_END__*/
+    // ----------------------------------------------
+
+    const timelineRoot = document.getElementById('timeline-root');
+    const modal = document.getElementById('importModal');
+    const inputArea = document.getElementById('markdownInput');
+    const sourceUrlInput = document.getElementById('sourceUrlInput');
+    const searchInput = document.getElementById('searchInput');
+    const dateFilter = document.getElementById('dateFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const noResultsMsg = document.getElementById('noResults');
+    const editToggle = document.getElementById('editModeToggle');
+    const btnSource = document.getElementById('btnSource');
+
+    // 初始化
+    renderTimeline(defaultData);
+    renderSourceButton();
+
+    function renderSourceButton() {
+        if (sourceLink && sourceLink.trim() !== "") {
+            btnSource.style.display = "flex";
+            btnSource.title = sourceLink;
+        } else {
+            btnSource.style.display = "none";
+        }
+    }
+
+    function openSourceLink() {
+        if (sourceLink) {
+            window.open(sourceLink, '_blank');
+        }
+    }
+
+    // --- 核心：渲染函数 ---
+    function renderTimeline(data) {
+        const sortedData = data.slice().sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
+            const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
+            return timeB - timeA;
+        });
+        defaultData = sortedData;
+
+        initDateFilterOptions(sortedData);
+        initTypeFilterOptions(sortedData);
+
+        timelineRoot.innerHTML = ''; 
+        sortedData.forEach((item, index) => {
+            const isPatch = (item.type || "").includes('补丁') || (item.type || "").toLowerCase() === 'patch';
+            const tagClass = isPatch ? 'patch' : 'major';
+            const tagName = (item.type && item.type.trim()) ? item.type : (isPatch ? '补丁更新' : '版本更新');
+            
+            const isOpenClass = index === 0 ? 'open' : ''; 
+            const delay = Math.min(index * 0.1, 1.0); 
+            const displayVer = item.ver && item.ver.trim() ? "v" + item.ver : "Update";
+            const displayAuthor = item.author ? `<span class="author-tag">👤 ${item.author}</span>` : '';
+            const displayDate = formatDateSimple(item.date);
+
+            let contentHtml = '';
+            if (!item.content || item.content.trim() === '') {
+                contentHtml = `<div class="log-placeholder">暂无内容</div>`;
+            } else {
+                // FIX: 增加判断，如果已经是HTML（包含高亮标签）则不再重复format
+                if(item.content.includes('<a href=') || item.content.includes('<span class="highlight-title">')) {
+                    contentHtml = item.content; 
+                } else {
+                    contentHtml = formatText(item.content); 
+                }
+            }
+
+            const html = `
+                <div class="timeline-item ${isOpenClass}" style="animation-delay: ${delay}s" 
+                     data-ver="${item.ver || ''}" data-date="${item.date || ''}" 
+                     data-type="${item.type || ''}" data-author="${item.author || ''}">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-card">
+                        <div class="card-header" onclick="toggleItem(this)">
+                            <div class="version-group">
+                                <span class="version-number">${displayVer}</span>
+                                <span class="version-date">📅 ${displayDate} ${displayAuthor}</span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="tag ${tagClass}">${tagName}</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="log-content" contenteditable="false">${contentHtml}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            timelineRoot.innerHTML += html;
+        });
+
+        toggleEditMode();
+        if(searchInput.value.trim() !== "" || dateFilter.value !== 'all' || typeFilter.value !== 'all') {
+            filterTimeline();
+        }
+    }
+
+    // --- 筛选选项初始化 ---
+    function initDateFilterOptions(data) {
+        const months = new Set();
+        data.forEach(item => {
+            const d = formatDateSimple(item.date);
+            if(d !== '未知日期') months.add(d.substring(0, 7));
+        });
+        const sortedMonths = Array.from(months).sort().reverse();
+        const currentVal = dateFilter.value;
+        dateFilter.innerHTML = '<option value="all">📅 全部日期</option>';
+        sortedMonths.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = `📅 ${m}`;
+            dateFilter.appendChild(opt);
+        });
+        if(sortedMonths.includes(currentVal)) dateFilter.value = currentVal;
+    }
+
+    function initTypeFilterOptions(data) {
+        const types = new Set();
+        data.forEach(item => {
+            if(item.type && item.type.trim() !== "") {
+                types.add(item.type);
+            } else {
+                types.add("Update");
+            }
+        });
+        const sortedTypes = Array.from(types).sort();
+        const currentVal = typeFilter.value;
+        
+        typeFilter.innerHTML = '<option value="all">🏷️ 全部分类</option>';
+        sortedTypes.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = `🏷️ ${t}`;
+            typeFilter.appendChild(opt);
+        });
+        
+        if(sortedTypes.includes(currentVal)) typeFilter.value = currentVal;
+    }
+
+    // --- 筛选逻辑 ---
+    function filterTimeline() {
+        const textFilter = searchInput.value.trim().toLowerCase();
+        const dateVal = dateFilter.value;
+        const typeVal = typeFilter.value;
+        
+        const items = document.querySelectorAll('.timeline-item');
+        let hasVisible = false;
+
+        items.forEach((item, index) => {
+            const originalData = defaultData[index];
+            const itemDateSimple = formatDateSimple(originalData.date);
+            const itemType = originalData.type || "Update";
+            
+            let dateMatch = (dateVal === 'all') || itemDateSimple.startsWith(dateVal);
+            let typeMatch = (typeVal === 'all') || (itemType === typeVal);
+            let textMatch = true;
+            if (textFilter !== "") {
+                const fullText = (originalData.ver + " " + originalData.date + " " + originalData.content + " " + (originalData.author || "")).toLowerCase();
+                textMatch = fullText.includes(textFilter);
+            }
+
+            if (dateMatch && typeMatch && textMatch) {
+                item.classList.remove('hidden');
+                item.classList.add('open'); 
+                
+                const contentDiv = item.querySelector('.log-content');
+                if (textFilter !== "") {
+                    let baseHtml = formatText(stripHtml(originalData.content || ""));
+                    contentDiv.innerHTML = applySearchHighlight(baseHtml, textFilter);
+                } else {
+                    // FIX: 这里同样增加判断，如果是HTML则不重复format
+                    if(originalData.content.includes('<a href=') || originalData.content.includes('<span class="highlight-title">')) {
+                         // 移除搜索高亮但保留HTML结构
+                         contentDiv.innerHTML = originalData.content.replace(/<span class="search-highlight">(.+?)<\/span>/g, '$1');
+                    } else {
+                        contentDiv.innerHTML = formatText(originalData.content);
+                    }
+                }
+                hasVisible = true;
+            } else {
+                item.classList.add('hidden');
+                item.classList.remove('open');
+            }
+        });
+        
+        if (textFilter === "" && dateVal === 'all' && typeVal === 'all') {
+            items.forEach((item, idx) => {
+                if(idx === 0) item.classList.add('open');
+                else item.classList.remove('open');
+            });
+        }
+        noResultsMsg.style.display = hasVisible ? 'none' : 'block';
+    }
+
+    function toggleEditMode() {
+        const isEditable = editToggle.checked;
+        const contents = document.querySelectorAll('.log-content');
+        contents.forEach(el => el.setAttribute('contenteditable', isEditable ? "true" : "false"));
+    }
+
+    function applySearchHighlight(html, term) {
+        if (!term) return html;
+        const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedTerm})(?![^<]*>)`, 'gi');
+        return html.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+
+    function stripHtml(html) {
+       let tmp = document.createElement("DIV");
+       tmp.innerHTML = html;
+       return tmp.textContent || tmp.innerText || "";
+    }
+
+    function formatDateSimple(rawDate) {
+        if (!rawDate) return "未知日期";
+        const dateObj = new Date(rawDate);
+        if (!isNaN(dateObj.getTime())) {
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        if (rawDate.includes(' ')) return rawDate.split(' ')[0];
+        return rawDate;
+    }
+
+    function formatText(rawString) {
+        if (!rawString) return "";
+        let html = rawString;
+        html = html.replace(/<br>/gi, '\n'); 
+        const urlRegex = /(https?:\/\/[^\s<]+)/g;
+        html = html.replace(urlRegex, function(url) {
+            return `<a href="${url}" target="_blank">${url}</a>`;
+        });
+        const keywords = ['【新增内容】', '【优化调整】', '【新活动】', '【修复】', '【新功能】', '【新增】'];
+        keywords.forEach(key => {
+            const regex = new RegExp(key, 'g');
+            html = html.replace(regex, `\n<span class="highlight-title">${key}</span>\n`);
+        });
+        html = html.replace(/([①-⑳])/g, '\n$1 ');
+        
+        // FIX: 增加 trim 防止首行出现空行被转为 <br>
+        html = html.split('\n').map(line => line.trim()).filter(line => line !== '').join('<br>');
+        return html;
+    }
+
+    // --- 导入解析 ---
+    function parseAndRender() {
+        const rawText = inputArea.value.trim();
+        const linkVal = sourceUrlInput.value.trim();
+        
+        if (linkVal) {
+            sourceLink = linkVal;
+            renderSourceButton();
+        }
+
+        if (!rawText) return;
+        
+        const lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
+        if (lines.length < 2) { alert("表格数据行数不足"); return; }
+
+        let headerIndex = -1;
+        for(let i=0; i<lines.length; i++) {
+            if(lines[i].includes('|')) { headerIndex = i; break; }
+        }
+        if(headerIndex === -1) { alert("未检测到Markdown表格"); return; }
+
+        const headers = lines[headerIndex].split('|').map(h => h.trim().toLowerCase());
+        const colMap = { ver: -1, date: -1, content: -1, type: -1, author: -1 };
+        headers.forEach((h, idx) => {
+            if (h.includes('版本') || h.includes('ver')) colMap.ver = idx;
+            else if (h.includes('日期') || h.includes('date')) colMap.date = idx;
+            else if (h.includes('内容') || h.includes('content') || h.includes('日志')) colMap.content = idx;
+            else if (h.includes('分类') || h.includes('type')) colMap.type = idx;
+            else if (h.includes('发布人') || h.includes('author')) colMap.author = idx;
+        });
+
+        if (colMap.content === -1) {
+            if(!confirm("未能自动识别列名。是否尝试按默认顺序导入？")) return;
+            colMap.ver=1; colMap.date=2; colMap.content=3; colMap.type=4; colMap.author=5;
+        }
+
+        const parsedData = [];
+        for(let i = headerIndex + 1; i < lines.length; i++) {
+            const line = lines[i];
+            if(!line.includes('|') || line.replace(/\|/g,'').replace(/-/g,'').trim() === '') continue;
+            
+            const parts = line.split('|');
+            const getVal = (idx) => (idx > -1 && idx < parts.length) ? parts[idx].trim() : "";
+            const rawContent = getVal(colMap.content);
+            const cleanDate = formatDateSimple(getVal(colMap.date));
+
+            if(rawContent || cleanDate) {
+                parsedData.push({
+                    ver: getVal(colMap.ver),
+                    date: cleanDate,
+                    content: rawContent, 
+                    type: getVal(colMap.type) || "Update",
+                    author: getVal(colMap.author)
+                });
+            }
+        }
+
+        if (parsedData.length > 0) {
+            renderTimeline(parsedData);
+            closeModal();
+            searchInput.value = '';
+            dateFilter.value = 'all';
+            typeFilter.value = 'all';
+        } else {
+            alert("未解析到数据。");
+        }
+    }
+
+    // --- 保存功能 (已修复：不再使用正则清理 input) ---
+    function saveHtmlFile() {
+        // 1. 还原筛选视图，确保数据是最全的状态
+        searchInput.value = '';
+        dateFilter.value = 'all';
+        typeFilter.value = 'all';
+        filterTimeline();
+
+        // 2. 收集当前 DOM 中的最新数据
+        const currentItems = document.querySelectorAll('.timeline-item');
+        const dataToSave = [];
+        currentItems.forEach(item => {
+            const contentDiv = item.querySelector('.log-content');
+            dataToSave.push({
+                ver: item.getAttribute('data-ver'),
+                date: item.getAttribute('data-date'),
+                type: item.getAttribute('data-type'),
+                author: item.getAttribute('data-author'),
+                content: contentDiv.innerHTML
+            });
+        });
+
+        // 3. 核心修复：在获取 HTML 字符串之前，手动清理输入框的 value 属性
+        searchInput.setAttribute('value', '');
+        sourceUrlInput.setAttribute('value', '');
+
+        // 4. 获取当前页面的完整 HTML
+        let htmlContent = document.documentElement.outerHTML;
+        
+        // 5. 构建新的数据块
+        const newDataBlock = `/*__DATA_START__*/
+    let defaultData = ${JSON.stringify(dataToSave, null, 4)};
+    let sourceLink = "${sourceLink}";
+    /*__DATA_END__*/`;
+        
+        // 6. 仅替换数据锚点区域，不触碰其他 JS 代码
+        const regex = /\/\*__DATA_START__\*\/[\s\S]*?\/\*__DATA_END__\*\//;
+        
+        if (regex.test(htmlContent)) {
+            htmlContent = htmlContent.replace(regex, newDataBlock);
+
+            const blob = new Blob([htmlContent], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const today = new Date().toISOString().split('T')[0];
+            a.href = url;
+            a.download = `LZ_更新日志_${today}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert("已保存！数据已成功写入文件。");
+        } else {
+            alert("保存失败：未找到数据锚点标记，请勿手动修改 HTML 源码中的 START/END 注释。");
+        }
+    }
+
+    function toggleItem(header) {
+        header.parentElement.parentElement.classList.toggle('open');
+    }
+    function openModal() {
+        modal.classList.add('active');
+        sourceUrlInput.value = sourceLink;
+        setTimeout(() => sourceUrlInput.focus(), 100);
+    }
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+</script>
+
+
+</body></html>
