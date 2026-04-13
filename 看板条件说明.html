@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>看板条件说明 · 吸沙SLG</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap');
+
+    :root {
+      --bg: #F7F6F3;
+      --card: #FFFFFF;
+      --border: #E0DDD6;
+      --text: #1C1B18;
+      --text2: #5C5A55;
+      --text3: #9A9890;
+      --accent-gold: #C08B2F;
+      --accent-blue: #2A5FA8;
+      --accent-gold-bg: #FBF3E3;
+      --accent-blue-bg: #EAF0FB;
+      --accent-green-bg: #EDF7EE;
+      --accent-green: #2E7D52;
+      --accent-purple-bg: #F3EDFA;
+      --accent-purple: #7B4FA0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans SC', sans-serif;
+      padding: 56px 48px;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    .header {
+      margin-bottom: 40px;
+      padding-bottom: 28px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .header-left .title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+    }
+
+    .header-left .sub {
+      font-size: 15px;
+      color: var(--text3);
+      letter-spacing: 1px;
+    }
+
+    .header-tags {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .tag {
+      font-size: 14px;
+      font-weight: 500;
+      padding: 5px 14px;
+      border-radius: 5px;
+      border: 1.5px solid;
+      letter-spacing: 0.5px;
+    }
+
+    .tag-beta4 { border-color: var(--accent-gold); color: var(--accent-gold); background: var(--accent-gold-bg); }
+    .tag-beta5 { border-color: var(--accent-blue); color: var(--accent-blue); background: var(--accent-blue-bg); }
+    .tag-us    { border-color: var(--accent-gold); color: var(--accent-gold); }
+    .tag-t3    { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+    /* ── Main Grid ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 32px;
+    }
+
+    /* ── Section Title ── */
+    .section-title {
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      color: var(--text3);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 16px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .left-col .section-title::before { background: var(--accent-gold); }
+    .right-col .section-title::before { background: var(--accent-blue); }
+
+    /* ── Test Cards ── */
+    .test-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin-bottom: 16px;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .test-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 5px;
+      height: 100%;
+      border-radius: 10px 0 0 10px;
+    }
+
+    .test-card.beta5::before { background: var(--accent-blue); }
+    .test-card.beta4::before { background: var(--accent-gold); }
+
+    .card-label {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .beta-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .beta5 .beta-badge { background: var(--accent-blue-bg); color: var(--accent-blue); border: 1px solid rgba(42,95,168,0.2); }
+    .beta4 .beta-badge { background: var(--accent-gold-bg); color: var(--accent-gold); border: 1px solid rgba(192,139,47,0.2); }
+
+    .card-ch {
+      font-size: 13px;
+      color: var(--text3);
+      font-weight: 400;
+    }
+
+    .kv-list {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 8px 16px;
+    }
+
+    .kv-list dt {
+      font-size: 15px;
+      color: var(--text3);
+      line-height: 1.6;
+    }
+
+    .kv-list dd {
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Filter Sections ── */
+    .filter-block {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .filter-block-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .icon-basic  { background: #F0EDE8; color: #8A8880; }
+    .icon-tz     { background: var(--accent-gold-bg); color: var(--accent-gold); }
+    .icon-ad     { background: var(--accent-blue-bg); color: var(--accent-blue); }
+    .icon-ch     { background: var(--accent-green-bg); color: var(--accent-green); }
+    .icon-pkg    { background: var(--accent-purple-bg); color: var(--accent-purple); }
+
+    .filter-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .filter-row dt {
+      font-size: 15px;
+      color: var(--text3);
+      line-height: 1.6;
+      padding-top: 1px;
+    }
+
+    .filter-row dd {
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .hl-gold { color: var(--accent-gold); font-weight: 600; }
+    .hl-blue { color: var(--accent-blue); font-weight: 600; }
+
+    .filter-divider {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 10px 0;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 36px;
+      padding-top: 18px;
+      border-top: 1.5px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left {
+      font-size: 13px;
+      color: var(--text3);
+      letter-spacing: 0.5px;
+    }
+
+    .footer-legend {
+      display: flex;
+      gap: 20px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text3);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .legend-dot.beta4 { background: var(--accent-gold); }
+    .legend-dot.beta5 { background: var(--accent-blue); }
+
+    /* ── Print ── */
+    @media print {
+      body { background: #fff; padding: 24px; }
+      .test-card, .filter-block { box-shadow: none; border-color: #ccc; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="header">
+      <div class="header-left">
+        <div class="title">看板条件说明</div>
+        <div class="sub">吸沙SLG · 三七游戏数据分析</div>
+      </div>
+      <div class="header-tags">
+        <span class="tag tag-beta4">β4</span>
+        <span class="tag tag-beta5">β5</span>
+        <span class="tag tag-us">US</span>
+        <span class="tag tag-t3">T3</span>
+      </div>
+    </div>
+
+    <div class="main-grid">
+
+      <!-- Left: Test History -->
+      <div class="left-col">
+        <div class="section-title">历史测试条件</div>
+
+        <div class="test-card beta5">
+          <div class="card-label">
+            <span class="beta-badge">β5</span>
+            技术测
+            <span class="card-ch">菲律宾 · 印度尼西亚 · 巴西 · 墨西哥</span>
+          </div>
+          <dl class="kv-list">
+            <dt>新进时间</dt><dd>260413 – 260414</dd>
+            <dt>渠道</dt><dd>菲律宾，印度尼西亚，巴西，墨西哥</dd>
+            <dt>广告类型</dt><dd>facebook-安装广告</dd>
+            <dt>区服ID</dt><dd>73001</dd>
+          </dl>
+        </div>
+
+        <div class="test-card beta4">
+          <div class="card-label">
+            <span class="beta-badge">β4</span>
+            技术测
+            <span class="card-ch">菲律宾 · 印度尼西亚 · 巴西 · 墨西哥</span>
+          </div>
+          <dl class="kv-list">
+            <dt>新进时间</dt><dd>251223 – 251225</dd>
+            <dt>渠道</dt><dd>菲律宾，印度尼西亚，巴西，墨西哥</dd>
+            <dt>广告类型</dt><dd>facebook-安装广告</dd>
+            <dt>区服ID</dt><dd>72001</dd>
+          </dl>
+        </div>
+
+        <div class="test-card beta4">
+          <div class="card-label">
+            <span class="beta-badge">β4</span>
+            正式测
+            <span class="card-ch">美国</span>
+          </div>
+          <dl class="kv-list">
+            <dt>新进时间</dt><dd>251226 – 251228</dd>
+            <dt>渠道</dt><dd>美国</dd>
+            <dt>广告类型</dt><dd>facebook-付费广告</dd>
+            <dt>区服ID</dt><dd>72002</dd>
+          </dl>
+        </div>
+      </div>
+
+      <!-- Right: Filter Definitions -->
+      <div class="right-col">
+        <div class="section-title">筛选定义说明</div>
+
+        <div class="filter-block">
+          <div class="filter-block-title">
+            <div class="filter-icon icon-basic">基</div>
+            基本条件
+          </div>
+          <dl class="filter-rows">
+            <div class="filter-row"><dt>新进时间</dt><dd>用户账号注册的时间范围</dd></div>
+            <div class="filter-row"><dt>发生时间</dt><dd>用户行为日志的时间范围</dd></div>
+          </dl>
+        </div>
+
+        <div class="filter-block">
+          <div class="filter-block-title">
+            <div class="filter-icon icon-tz">区</div>
+            时区选择
+          </div>
+          <dl class="filter-rows">
+            <div class="filter-row"><dt>美国</dt><dd>推荐选 <span class="hl-gold">UTC-5</span>（冬令时）</dd></div>
+            <div class="filter-row"><dt>T3地区</dt><dd>推荐选 <span class="hl-blue">UTC+7</span></dd></div>
+          </dl>
+        </div>
+
+        <div class="filter-block">
+          <div class="filter-block-title">
+            <div class="filter-icon icon-ad">广</div>
+            广告类型选择
+          </div>
+          <dl class="filter-rows">
+            <div class="filter-row"><dt>MAIA</dt><dd>facebook-<span class="hl-blue">安装广告</span></dd></div>
+            <div class="filter-row"><dt>AEO</dt><dd>facebook-<span class="hl-gold">付费广告</span></dd></div>
+          </dl>
+        </div>
+
+        <div class="filter-block">
+          <div class="filter-block-title">
+            <div class="filter-icon icon-ch">渠</div>
+            渠道选择
+          </div>
+          <dl class="filter-rows">
+            <div class="filter-row"><dt>美国</dt><dd>独立渠道</dd></div>
+            <div class="filter-row"><dt>T3地区</dt><dd>印尼 / 菲律宾 / 巴西 / 墨西哥</dd></div>
+          </dl>
+        </div>
+
+        <div class="filter-block">
+          <div class="filter-block-title">
+            <div class="filter-icon icon-pkg">包</div>
+            游戏包
+          </div>
+          <dl class="filter-rows">
+            <div class="filter-row"><dt>新包</dt><dd>β4 / β5测试</dd></div>
+            <div class="filter-row"><dt>旧包</dt><dd>β3之前数据</dd></div>
+            <hr class="filter-divider">
+          </dl>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-left">吸沙SLG · 看板条件说明 · 三七游戏</div>
+      <div class="footer-legend">
+        <div class="legend-item"><div class="legend-dot beta4"></div>β4 历史测试</div>
+        <div class="legend-item"><div class="legend-dot beta5"></div>β5 最新测试</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
