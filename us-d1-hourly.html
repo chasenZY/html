@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>美国次留分小时预估</title>
+<style>
+  body { font-family: Arial, "Microsoft YaHei", sans-serif; margin: 24px; color: #1a1a1a; background: #f6f8fb; }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  .sub { color: #667; font-size: 13px; margin-bottom: 16px; }
+  .cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .card { background: #fff; border: 1px solid #e3e8ef; border-radius: 8px; padding: 12px 16px; min-width: 140px; }
+  .card b { display: block; font-size: 22px; color: #1f4e79; }
+  .card span { font-size: 12px; color: #667; }
+  table { border-collapse: collapse; background: #fff; width: 100%; }
+  th, td { border: 1px solid #e3e8ef; padding: 6px 8px; font-size: 13px; text-align: right; }
+  th { background: #1f4e79; color: #fff; text-align: center; }
+  td.l { text-align: left; }
+  tr.act { background: #eef6ee; }
+  .bar { height: 10px; background: #1f4e79; border-radius: 2px; }
+  .bar.fc { background: #9bb8d3; }
+  .status { font-size: 13px; color: #555; margin: 8px 0 16px; }
+  button { background: #1f4e79; color: #fff; border: 0; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+  .note { font-size: 12px; color: #667; margin-top: 12px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<h1>美国次留分小时</h1>
+<p class="sub">9月23日新进 · UTC-4 · US1 · facebook安装广告 · gid=487。已发生的小时用实际次留率，后面的小时按6月次留率走势，并用首日驻留通过率修正剩余爬升。</p>
+<div class="cards" id="cards"></div>
+<p class="status" id="status">正在计算…</p>
+<button id="refresh" type="button">立即重算</button>
+<div id="table"></div>
+<p class="note" id="note"></p>
+<script>
+const API_KEY = "BearereyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2NDk3IiwiYWNjZXNzX3Rva2VuX2lkIjozNywiY3JlYXRlZCI6MTc3NDg2NDk2NjIzOCwiaXAiOiIxODMuMzYuMTc3LjgiLCJleHAiOjYyNDQ5MDk5MzAxfQ.DCVqM0Cor13UsS91Wfhz8PHyF9MnFfOPHGBoSdr1NsL_-Z0uN3esOg4WGaaiZbxw4dA2X12yd44yHv_qzw53WA";
+const JUNE_RATE = [0.0505,0.0744,0.0886,0.0944,0.1016,0.1067,0.1281,0.1507,0.1759,0.1953,0.2167,0.2393,0.2607,0.2781,0.2878,0.2950,0.3105,0.3228,0.3338,0.3448,0.3538,0.3590,0.3648,0.3674];
+const DWELL = {
+  b6: { m10: 0.832, m30: 0.591, m60: 0.394 },
+  b2: { m10: 0.807, m30: 0.495, m60: 0.281 }
+};
+let SNAPSHOT = { newUsers: 1157, byHour: { 0: 51, 1: 73, 2: 88 } };
+
+function dwellMultiplier() {
+  const a = DWELL.b6, b = DWELL.b2;
+  return 0.2 * (a.m10 / b.m10) + 0.3 * (a.m30 / b.m30) + 0.5 * (a.m60 / b.m60);
+}
+function observedPace(actual) {
+  const hours = Object.keys(actual).map(Number).sort((a, b) => a - b);
+  if (hours.length < 2) return null;
+  const h0 = hours[0], h1 = hours[hours.length - 1];
+  const dAct = actual[h1] - actual[h0];
+  const dJun = JUNE_RATE[h1] - JUNE_RATE[h0];
+  if (dJun <= 0) return null;
+  return dAct / dJun;
+}
+function forecast(actualMap, newUsers) {
+  const hours = Object.keys(actualMap).map(Number).sort((a, b) => a - b);
+  const H = hours.length ? hours[hours.length - 1] : 0;
+  const rH = actualMap[H];
+  const pace = observedPace(actualMap);
+  const prior = dwellMultiplier();
+  const w = Math.min(1, hours.length / 12);
+  const m = pace == null ? prior : (1 - w) * prior + w * pace;
+  const rows = [];
+  let prev = 0;
+  for (let h = 0; h < 24; h++) {
+    let rate, kind;
+    if (actualMap[h] != null) {
+      rate = actualMap[h];
+      kind = "实际";
+    } else {
+      rate = rH + (JUNE_RATE[h] - JUNE_RATE[H]) * m;
+      kind = "预估";
+    }
+    rate = Math.max(prev, Math.min(0.9999, rate));
+    prev = rate;
+    rows.push({ h, rate, users: Math.round(rate * newUsers), kind, m, prior, pace, w });
+  }
+  return rows;
+}
+function render(rows, newUsers, source) {
+  const lastAct = [...rows].reverse().find(r => r.kind === "实际");
+  const fin = rows[23];
+  document.getElementById("cards").innerHTML = [
+    ["新进", newUsers],
+    ["已观察到", lastAct ? lastAct.h.toString().padStart(2, "0") + "点 " + (lastAct.rate * 100).toFixed(2) + "%" : "-"],
+    ["预估全天次留", (fin.rate * 100).toFixed(2) + "%"],
+    ["6月全天次留", "36.74%"],
+    ["驻留修正", fin.m.toFixed(3)]
+  ].map(([k, v]) => "<div class='card'><b>" + v + "</b><span>" + k + "</span></div>").join("");
+  let html = "<table><tr><th>截至次留日</th><th>次留率</th><th>次留人数</th><th>口径</th><th>6月次留率</th><th></th></tr>";
+  rows.forEach(r => {
+    const pct = (r.rate * 100).toFixed(2) + "%";
+    html += "<tr class='" + (r.kind === "实际" ? "act" : "") + "'><td>" + String(r.h).padStart(2, "0") + "</td><td>" + pct + "</td><td>" + r.users + "</td><td class='l'>" + r.kind + "</td><td>" + (JUNE_RATE[r.h] * 100).toFixed(2) + "%</td><td><div class='bar " + (r.kind === "预估" ? "fc" : "") + "' style='width:" + (r.rate * 220).toFixed(0) + "px'></div></td></tr>";
+  });
+  html += "</table>";
+  document.getElementById("table").innerHTML = html;
+  document.getElementById("status").textContent = source + " · " + new Date().toLocaleString();
+  document.getElementById("note").textContent = "剩余爬升 = 6月从当前小时到该小时的次留率差 × 修正系数。修正系数 = 驻留先验 " + fin.prior.toFixed(3) + "（10/30/60分钟通过率，权重0.2/0.3/0.5）与已观察到的次留率爬升速度 " + (fin.pace == null ? "暂无" : fin.pace.toFixed(3)) + " 按已观察小时数混合。每小时拉一次实际登录，已发生小时锁定，只改后面的预估。";
+}
+function sqlText() {
+  return `WITH ad AS (
+  SELECT concat(CAST(account AS VARCHAR), CAST(time_ts AS VARCHAR)) AS accountTime, concat(channel, adtype) AS adtype
+  FROM logdata_gmxs_global_views.dim_channel_account_ad
+  WHERE format_datetime(from_unixtime((time_ts / 1000), 'UTC-4'), 'yyyy-MM-dd HH:mm:ss') >= '2026-09-23 00:00:00'
+    AND format_datetime(from_unixtime((time_ts / 1000), 'UTC-4'), 'yyyy-MM-dd HH:mm:ss') < '2026-09-24 00:00:00'
+), na AS (
+  SELECT CAST(c.account AS VARCHAR) AS account
+  FROM logdata_gmxs_global_views.dim_logdata_channel c
+  LEFT JOIN ad ON concat(CAST(c.account AS VARCHAR), CAST(c.time_ts AS VARCHAR)) = ad.accountTime
+  WHERE c.DAY >= '2026-09-22' AND c.DAY <= '2026-09-24'
+    AND CAST(c.gid AS VARCHAR) = '487' AND CAST(c.pid AS VARCHAR) = 'US1'
+    AND format_datetime(from_unixtime((c.time_ts / 1000), 'UTC-4'), 'yyyy-MM-dd HH:mm:ss') >= '2026-09-23 00:00:00'
+    AND format_datetime(from_unixtime((c.time_ts / 1000), 'UTC-4'), 'yyyy-MM-dd HH:mm:ss') < '2026-09-24 00:00:00'
+  GROUP BY 1
+  HAVING CAST(min_by(c.pid, c.time_ts) AS VARCHAR) = 'US1'
+     AND CAST(min_by(c.gid, c.time_ts) AS VARCHAR) = '487'
+     AND min_by(ad.adtype, c.time_ts) = 'facebook安装广告'
+), login_d1 AS (
+  SELECT CAST(l.__common__account AS VARCHAR) AS account, hour(from_unixtime((l.__common__time__ts / 1000), 'UTC-4')) AS login_hr
+  FROM logdata_gmxs_global_views.login l
+  WHERE l.partitionday >= '2026-09-23' AND l.partitionday <= '2026-09-25'
+    AND CAST(l.__common__gid AS VARCHAR) = '487'
+    AND date(from_unixtime((l.__common__time__ts / 1000), 'UTC-4')) = date '2026-09-24'
+    AND CAST(l.__common__account AS VARCHAR) IN (SELECT account FROM na)
+), hours AS (
+  SELECT n FROM (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),(21),(22),(23)) AS t(n)
+), base AS (
+  SELECT na.account, h.n, max(CASE WHEN l.login_hr <= h.n THEN 1 ELSE 0 END) AS hit
+  FROM na CROSS JOIN hours h
+  LEFT JOIN login_d1 l ON na.account = l.account
+  GROUP BY 1, 2
+)
+SELECT LPAD(CAST(n AS VARCHAR), 2, '0') AS hh, CAST(count(DISTINCT account) AS VARCHAR) AS new_users, CAST(count(DISTINCT CASE WHEN hit = 1 THEN account END) AS VARCHAR) AS retain_users
+FROM base GROUP BY n ORDER BY n`;
+}
+function parseCsv(text) {
+  const lines = text.trim().split(/\r?\n/).filter(Boolean);
+  if (lines.length < 2) return null;
+  const head = lines[0].split(",");
+  const hi = head.indexOf("hh"), ni = head.indexOf("new_users"), ri = head.indexOf("retain_users");
+  if (hi < 0) return null;
+  const nowHour = (new Date().getUTCHours() - 4 + 24) % 24;
+  const byHour = {};
+  let newUsers = 0;
+  for (let i = 1; i < lines.length; i++) {
+    const c = lines[i].split(",");
+    const h = parseInt(c[hi], 10);
+    if (h >= nowHour) continue;
+    newUsers = parseInt(c[ni], 10);
+    byHour[h] = parseInt(c[ri], 10) / newUsers;
+  }
+  return newUsers ? { newUsers, byHour } : null;
+}
+async function pullActual() {
+  const body = JSON.stringify({ code: "gmxs_global", sql: sqlText() });
+  const headers = { "Content-Type": "application/json", Authorization: API_KEY.indexOf("Bearer") === 0 ? API_KEY : "Bearer " + API_KEY };
+  const urls = ["https://athena-cloud.996a.com/api/open/sql_query", "https://athena-cloud.996a.com/api/open/query"];
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { method: "POST", headers, body });
+      const text = await res.text();
+      let parsed = null;
+      try {
+        const json = JSON.parse(text);
+        const link = json.data || json.url || (json.result && JSON.parse(json.result).data);
+        if (link && String(link).indexOf("http") === 0) {
+          const csv = await (await fetch(link)).text();
+          parsed = parseCsv(csv);
+        }
+      } catch (e) { parsed = parseCsv(text); }
+      if (parsed) return parsed;
+    } catch (e) {}
+  }
+  return null;
+}
+async function tick() {
+  let source = "使用页面内快照";
+  const live = await pullActual();
+  if (live) { SNAPSHOT = { newUsers: live.newUsers, byHour: {} }; Object.keys(live.byHour).forEach(h => SNAPSHOT.byHour[h] = live.byHour[h]); source = "已用雅典娜最新实际数"; }
+  else {
+    const map = {};
+    Object.keys(SNAPSHOT.byHour).forEach(h => { map[h] = SNAPSHOT.byHour[h] / (SNAPSHOT.byHour[h] > 1 ? 1 : 1); });
+  }
+  const rates = {};
+  Object.keys(SNAPSHOT.byHour).forEach(h => {
+    const v = SNAPSHOT.byHour[h];
+    rates[h] = v > 1 ? v / SNAPSHOT.newUsers : v;
+  });
+  render(forecast(rates, SNAPSHOT.newUsers), SNAPSHOT.newUsers, source);
+}
+document.getElementById("refresh").onclick = tick;
+tick();
+setInterval(tick, 60 * 60 * 1000);
+</script>
+</body>
+</html>
